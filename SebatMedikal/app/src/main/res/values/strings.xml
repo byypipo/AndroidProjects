@@ -1,0 +1,120 @@
+<resources>
+    <string name="app_name">SebatMedikal</string>
+
+    <string name="hint_username">Kullanıcı Adı</string>
+    <string name="hint_password">Şifre</string>
+    <string name="login">Giriş</string>
+    <string name="empty_username">Lütfen kullanıcı adınızı giriniz</string>
+    <string name="empty_password">Lütfen şifrenizi giriniz</string>
+    <string name="invalid_password">Giriş bilgileri hatalı</string>
+
+    <!--User Account-->
+    <string name="userName">Kullanıcı Adı</string>
+    <string name="password">Şifre</string>
+    <string name="firstName">Ad</string>
+    <string name="lastName">Soyad</string>
+    <string name="email">Email</string>
+    <string name="userType">Kullanıcı Tipi</string>
+
+    <!--Base-->
+    <string name="pleaseWait">Lütfen Bekleyiniz</string>
+    <string name="rememberMe">Beni Hatırla</string>
+    <string name="save">Kaydet</string>
+    <string name="delete">Sil</string>
+    <string name="update">Güncelle</string>
+
+    <!--server information-->
+    <string name="serverURL">http://192.168.1.107:8080</string>
+    <string name="serviceTagUser">/usersRest</string>
+    <string name="serviceTagRole">/rolesRest</string>
+    <string name="serviceTagProduct">/productsRest</string>
+    <string name="serviceTagOperation">/operationsRest</string>
+    <string name="serviceTagOperationType">/operationTypesRest</string>
+    <string name="serviceTagBrand">/brandsRest</string>
+    <string name="serverUnreachable">Server kullanılabilir durumda değil</string>
+
+    <string name="createOperationURL">http://192.168.1.107:8080/productsRest/%1$d/operation/%2$d</string>
+
+    <!--server information-->
+    <string name="userNotFound">Kullanıcı bulunamadı</string>
+    <string name="usersNotFound">Kullanıcılar bulunamadı</string>
+    <string name="userExist">Kullanıcı zaten var</string>
+    <string name="createdNotFound">Oluşturan kişi bulunamadı</string>
+    <string name="brandNotFound">Marka bulunamadı</string>
+    <string name="brandsNotFound">Markalar bulunamadı</string>
+    <string name="brandExist">Marka zaten var</string>
+    <string name="productNotFound">Ürün bulunamadı</string>
+    <string name="productsNotFound">Ürünler bulunamadı</string>
+    <string name="productExist">Ürün zaten var</string>
+    <string name="operationNotFound">İşlem bulunamadı</string>
+    <string name="operationsNotFound">İşlemler bulunamadı</string>
+    <string name="operationTypeNotFound">İşlem tipi bulunamadı</string>
+    <string name="operationTypesNotFound">İşlem tipleri bulunamadı</string>
+    <string name="roleNotFound">Kullanıcı tipi bulunamadı</string>
+    <string name="rolesNotFound">Kullanıcı tipleri bulunamadı</string>
+    <string name="operationCountGt0">İşlem sayısı 0 dan büyük olmalıdır</string>
+    <string name="insufficientStock">İşlem için stok yetersiz</string>
+
+    <!--Tittles-->
+    <string name="title_activity_main">AnaSayfa</string>
+    <string name="title_activity_products">Ürünler</string>
+    <string name="title_activity_operations">İşlemler</string>
+    <string name="title_activity_account_settings">Hesap Ayarları</string>
+    <string name="title_activity_users">Kullanıcılar</string>
+    <string name="title_activity_notifications">Bildirimler</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--menu-->
+    <string name="baseActivity">Ana Sayfa</string>
+    <string name="products">Ürünler</string>
+    <string name="myAccount">Hesabım</string>
+    <string name="accountSettings">Hesap Ayarları</string>
+    <string name="valueSettings">Değişken ayarları</string>
+    <string name="messages">Mesajlar</string>
+    <string name="users">Kullanıcılar</string>
+    <string name="exit">Çıkış</string>
+
+    <!--navigation var-->
+    <string name="unknownUser">Bilinmeyen Kullanıcı</string>
+    <string name="unknownRole">Bilinmeyen Tip</string>
+
+    <!--layout_products_product-->
+    <string name="productName">Ürün adı</string>
+    <string name="price">Fiyat</string>
+    <string name="totalPrice">Toplam Fiyat</string>
+    <string name="brand">Marka</string>
+    <string name="note">Not</string>
+    <string name="stock">Stok</string>
+    <string name="purchase">Alış</string>
+    <string name="newOperation">Yeni İşlem</string>
+    <string name="sale">Satış</string>
+    <string name="title_activity_test_tab">TestTab</string>
+    <string name="currency">TL</string>
+    <string name="defaultPrice">0 TL</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+
+    <!--operation_details-->
+    <string name="operation_note">İşlem notu</string>
+    <string name="operation_type">İşlem Tipi</string>
+    <string name="operation_count">İşlem Sayısı</string>
+    <string name="operation_createdBy">İşlemi Yapan</string>
+
+    <!--operation_types-->
+    <string name="operation_type_prompt">Lütfen İşlem Tipini Seçiniz</string>
+
+    <string name="more">Daha fazla</string>
+
+    <string-array name="operationtype_array">
+        <item>Alım</item>
+        <item>Satım</item>
+    </string-array>
+
+    <!--FCM-->
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+
+
+</resources>

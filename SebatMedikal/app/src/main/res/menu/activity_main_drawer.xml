@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_main"
+            android:icon="@drawable/home"
+            android:title="@string/baseActivity" />
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@drawable/products"
+            android:title="@string/products" />
+    </group>
+
+    <item android:title="@string/myAccount">
+        <menu
+            android:checkableBehavior="single"
+            android:icon="@drawable/myaccount">
+            <item
+                android:id="@+id/nav_accountSettings"
+                android:icon="@drawable/settings"
+                android:title="@string/accountSettings" />
+            <item
+                android:id="@+id/nav_users"
+                android:icon="@drawable/users"
+                android:title="@string/users" />
+            <item
+                android:id="@+id/nav_messages"
+                android:icon="@drawable/envelope"
+                android:title="@string/messages" />
+            <item
+                android:id="@+id/nav_valueSettings"
+                android:icon="@drawable/parameters"
+                android:title="@string/valueSettings" />
+            <item
+                android:id="@+id/nav_exit"
+                android:icon="@drawable/exit"
+                android:title="@string/exit" />
+        </menu>
+    </item>
+
+</menu>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<color name="colorPrimary">#3F51B5</color>-->
+    <!--<color name="colorPrimaryDark">#303F9F</color>-->
+    <!--<color name="colorAccent">#FF4081</color>-->
+
+    <color name="colorPrimary">#33b5e5</color>
+    <color name="colorPrimaryDark">#ff33b5e0</color>
+    <color name="colorAccent">#aaaaaa</color>
+
+    <color name="gray">#d3d3d3</color>
+    <color name="white">#fafafa</color>
+
+    <color name="online">#00ed00</color>
+    <color name="offline">#fd0300</color>
+
+</resources>

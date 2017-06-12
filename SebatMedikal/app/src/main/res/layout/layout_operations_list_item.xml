@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_operations"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/list_item_operations_productname"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:maxLines="4"
+            android:padding="10dip"
+            android:text="@string/productName"
+            android:textSize="19dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/list_item_operations_count"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:padding="10dip"
+            android:text="@string/operation_count"
+            android:textSize="13dip"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/list_item_operations_operationtype"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:padding="10dip"
+        android:text="@string/operation_type"
+        android:textSize="19dip"
+        android:textStyle="bold" />
+</LinearLayout>

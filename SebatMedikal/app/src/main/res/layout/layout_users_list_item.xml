@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/list_item_users"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin">
+
+    <com.sebatmedikal.external.CircleImageView
+        android:id="@+id/list_item_users_image"
+        android:layout_width="@dimen/image_circle"
+        android:layout_height="@dimen/image_circle"
+        android:layout_centerInParent="true"
+        app:civ_border_width="3dp" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/list_item_users_username"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:maxLines="4"
+            android:padding="10dip"
+            android:text="@string/userName"
+            android:textSize="19dip"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/list_item_users_usertype"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:padding="10dip"
+            android:text="@string/userType"
+            android:textSize="13dip"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</LinearLayout>
