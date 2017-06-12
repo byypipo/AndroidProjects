@@ -30,13 +30,14 @@ public class LoginActivity extends BaseActivity {
     private EditText mPasswordView;
     private CheckBox mRememberMe;
 
-    //    private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private String fcmRegistrationId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mAuth = FirebaseAuth.getInstance();
         fcmRegistrationId = FirebaseInstanceId.getInstance().getToken();
         LogUtil.logMessage(getClass(), "fcmRegistrationId: " + fcmRegistrationId);
 
