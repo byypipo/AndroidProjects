@@ -1,5 +1,6 @@
 package com.sebatmedikal.mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -247,11 +248,10 @@ public class Mapper {
     }
 
     private static String prepareContentString(Object content) throws Exception {
-        String contentString = (String) content;
-        if (!(content instanceof String)) {
-            contentString = mapper.writeValueAsString(content);
+        if (content instanceof String) {
+            return (String) content;
         }
 
-        return contentString;
+        return mapper.writeValueAsString(content);
     }
 }
