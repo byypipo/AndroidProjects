@@ -130,32 +130,20 @@ public class LoginActivity extends BaseActivity {
                     }
 
                     if (success) {
-                        editor.putString("username", user.getUsername());
-                        editor.putString("firstname", user.getFirstName());
-                        editor.putString("lastname", user.getLastName());
-                        editor.putString("fullname", user.getFirstName() + " " + user.getLastName());
-                        editor.putString("role", user.getRole().getRoleName());
-                        editor.putString("userid", user.getId() + "");
-
-                        if (NullUtil.isNotNull(user.getImage())) {
-                            String image = Base64.encodeToString(user.getImage(), Base64.DEFAULT);
-                            editor.putString("image", image);
-                        }
+                        preparedSharedPreferences(user, accessToken);
 
                         if (mRememberMe.isChecked()) {
                             editor.putString("password", mPasswordView.getText().toString());
                             editor.putBoolean("rememberMe", true);
                             editor.putBoolean("login", true);
-                            editor.putString("accessToken", accessToken);
                         } else {
                             editor.remove("password");
                             editor.remove("rememberMe");
                             editor.remove("login");
-                            editor.remove("accessToken");
                         }
                         editor.commit();
 
-                        LogUtil.logMessage(LoginActivity.class, Level.INFO, "Login successfully username: " + user.getUsername());
+                        LogUtil.logMessage(LoginActivity.class, Level.INFO, "Login successfully");
                         goToActivity(OperationsActivity.class);
                         mPasswordView.setText("");
                     } else {

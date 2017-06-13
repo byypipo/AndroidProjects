@@ -1,8 +1,13 @@
 package com.sebatmedikal.activity;
 
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,16 +16,14 @@ import android.widget.TextView;
 
 import com.sebatmedikal.R;
 import com.sebatmedikal.mapper.Mapper;
-import com.sebatmedikal.remote.domain.Product;
 import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.request.RequestModelGenerator;
 import com.sebatmedikal.task.BaseTask;
 import com.sebatmedikal.task.Performer;
 import com.sebatmedikal.util.CompareUtil;
+import com.sebatmedikal.util.ImageUtil;
 import com.sebatmedikal.util.NullUtil;
-
-import java.util.List;
 
 public class AccountSettingsActivity extends BaseActivity {
     private User me;
@@ -39,6 +42,11 @@ public class AccountSettingsActivity extends BaseActivity {
 
     private EditText visibledET;
     private TextView gonedTW;
+
+    private String picturePath;
+    private static int RESULT_LOAD_IMAGE = 1;
+    private int degree = 0;
+    private boolean imageChanged = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +117,16 @@ public class AccountSettingsActivity extends BaseActivity {
             public void onClick(View v) {
                 refreshTableRow();
                 changeTableRow(emailTW, emailET);
+            }
+        });
+
+        image.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(
+                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                startActivityForResult(intent, RESULT_LOAD_IMAGE);
             }
         });
     }
@@ -205,17 +223,32 @@ public class AccountSettingsActivity extends BaseActivity {
         if (!CompareUtil.equal(usernameTW.getText().toString(), me.getUsername())) {
             me.setUsername(usernameTW.getText().toString());
             update = true;
-        } else if (!CompareUtil.equal(passwordTW.getText().toString(), me.getPassword())) {
+        }
+
+        if (!CompareUtil.equal(passwordTW.getText().toString(), me.getPassword())) {
             me.setPassword(passwordTW.getText().toString());
             update = true;
-        } else if (!CompareUtil.equal(firstnameTW.getText().toString(), me.getFirstName())) {
+        }
+
+        if (!CompareUtil.equal(firstnameTW.getText().toString(), me.getFirstName())) {
             me.setFirstName(firstnameTW.getText().toString());
             update = true;
-        } else if (!CompareUtil.equal(lastnameTW.getText().toString(), me.getLastName())) {
+        }
+
+        if (!CompareUtil.equal(lastnameTW.getText().toString(), me.getLastName())) {
             me.setLastName(lastnameTW.getText().toString());
             update = true;
-        } else if (!CompareUtil.equal(emailTW.getText().toString(), me.getEmail())) {
+        }
+
+        if (!CompareUtil.equal(emailTW.getText().toString(), me.getEmail())) {
             me.setEmail(emailTW.getText().toString());
+            update = true;
+        }
+
+        if (imageChanged) {
+            Bitmap newImageBitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
+            byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, 0.1);
+            me.setImage(newImage);
             update = true;
         }
 
@@ -230,7 +263,7 @@ public class AccountSettingsActivity extends BaseActivity {
         baseTask = new BaseTask(URL, requestModel, new Performer() {
             @Override
             public void perform(boolean success) {
-                User user = Mapper.userMapper(baseTask.getContent());
+//                me = Mapper.userMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
 
@@ -243,6 +276,7 @@ public class AccountSettingsActivity extends BaseActivity {
                 }
 
                 if (success) {
+                    preparedSharedPreferences(me);
                     prepareContent();
                     showToast("Account updated");
                 } else {
@@ -251,5 +285,26 @@ public class AccountSettingsActivity extends BaseActivity {
             }
         });
         baseTask.execute((Void) null);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RESULT_LOAD_IMAGE && resultCode == RESULT_OK && null != data) {
+            Uri selectedImage = data.getData();
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+            Cursor cursor = getContentResolver().query(selectedImage,
+                    filePathColumn, null, null, null);
+            cursor.moveToFirst();
+
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            picturePath = cursor.getString(columnIndex);
+            cursor.close();
+
+            image.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            imageChanged = true;
+        }
     }
 }

@@ -35,7 +35,7 @@
 
     <string name="createOperationURL">http://192.168.1.107:8080/productsRest/%1$d/operation/%2$d</string>
 
-    <!--server information-->
+    <!--Remote config-->
     <string name="userNotFound">Kullanıcı bulunamadı</string>
     <string name="usersNotFound">Kullanıcılar bulunamadı</string>
     <string name="userExist">Kullanıcı zaten var</string>
@@ -78,6 +78,11 @@
     <string name="users">Kullanıcılar</string>
     <string name="exit">Çıkış</string>
 
+    <!--users-->
+    <string name="newUser">Yeni Kullanıcı</string>
+    <string name="roleAdmin">1</string>
+    <string name="roleUser">2</string>
+
     <!--navigation var-->
     <string name="unknownUser">Bilinmeyen Kullanıcı</string>
     <string name="unknownRole">Bilinmeyen Tip</string>
@@ -111,6 +116,11 @@
     <string-array name="operationtype_array">
         <item>Alım</item>
         <item>Satım</item>
+    </string-array>
+
+    <string-array name="role_array">
+        <item>User</item>
+        <item>Admin</item>
     </string-array>
 
     <!--FCM-->

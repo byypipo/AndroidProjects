@@ -3,9 +3,6 @@ package com.sebatmedikal.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -13,8 +10,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.util.Base64;
@@ -34,28 +29,25 @@ import android.widget.Toast;
 
 import com.sebatmedikal.R;
 import com.sebatmedikal.external.CircleImageView;
+import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.request.RequestModelGenerator;
 import com.sebatmedikal.task.BaseTask;
 import com.sebatmedikal.task.Performer;
 import com.sebatmedikal.util.LogUtil;
-import com.sebatmedikal.util.NotificationUtil;
 import com.sebatmedikal.util.NullUtil;
 
 public class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    protected SharedPreferences preferences;
-    protected SharedPreferences.Editor editor;
+    protected static SharedPreferences preferences;
+    protected static SharedPreferences.Editor editor;
 
     protected RelativeLayout mProgressView;
     protected LinearLayout mEmptyView;
     protected View currentView;
 
-    private int test_NotificationId = 1;
-
     private DrawerLayout drawer;
-
     protected BaseTask baseTask = null;
 
     @Override
@@ -71,6 +63,11 @@ public class BaseActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        if (NullUtil.isNull(preferences)) {
+            preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            editor = preferences.edit();
+        }
+
         prepareNavigationView();
 
         mProgressView = (RelativeLayout) findViewById(R.id.content_main_progress_layout);
@@ -80,11 +77,7 @@ public class BaseActivity extends AppCompatActivity
     private void prepareNavigationView() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         View hView = navigationView.getHeaderView(0);
-
-        preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        editor = preferences.edit();
 
         String userFullName = preferences.getString("fullname", null);
         String role = preferences.getString("role", null);
@@ -100,12 +93,13 @@ public class BaseActivity extends AppCompatActivity
             usertype.setText(role);
         }
 
+        CircleImageView imageView = (CircleImageView) hView.findViewById(R.id.nav_bar_image);
         if (NullUtil.isNotNull(imageString)) {
             byte[] image = Base64.decode(imageString, Base64.DEFAULT);
             Bitmap imageBMP = BitmapFactory.decodeByteArray(image, 0, image.length);
-
-            CircleImageView imageView = (CircleImageView) hView.findViewById(R.id.nav_bar_image);
             imageView.setImageBitmap(imageBMP);
+        } else {
+            imageView.setImageBitmap(null);
         }
     }
 
@@ -186,9 +180,8 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_accountSettings) {
             goToActivity(AccountSettingsActivity.class);
         } else if (id == R.id.nav_messages) {
-//            NotificationUtil.test_SimpleNotification(this, test_NotificationId++, "TITLE", "CONTENT: byypipo");
-//            NotificationUtil.test_ExpandedLayoutNotification(this);
-            NotificationUtil.test_InlineReplyNotification(this,test_NotificationId++);
+            //TODO DELETE
+//            NotificationUtil.test_InlineReplyNotification(this, test_NotificationId++);
         } else if (id == R.id.nav_valueSettings) {
 
         } else if (id == R.id.nav_exit) {
@@ -250,7 +243,7 @@ public class BaseActivity extends AppCompatActivity
         return getString(id);
     }
 
-    public String getAccessToken() {
+    protected String getAccessToken() {
         return preferences.getString("accessToken", null);
     }
 
@@ -258,5 +251,31 @@ public class BaseActivity extends AppCompatActivity
         LogUtil.logMessage(getClass(), "Loading " + clazz.getName());
         Intent intent = new Intent(this, clazz);
         startActivity(intent);
+    }
+
+    protected void preparedSharedPreferences(User user) {
+        preparedSharedPreferences(user, null);
+    }
+
+    protected void preparedSharedPreferences(User user, String accessToken) {
+        editor.putString("username", user.getUsername());
+        editor.putString("firstname", user.getFirstName());
+        editor.putString("lastname", user.getLastName());
+        editor.putString("fullname", user.getFirstName() + " " + user.getLastName());
+        editor.putString("role", user.getRole().getRoleName());
+        editor.putString("roleid", user.getRole().getId() + "");
+        editor.putString("userid", user.getId() + "");
+
+        if (NullUtil.isNotNull(accessToken)) {
+            editor.putString("accessToken", accessToken);
+        }
+
+        if (NullUtil.isNotNull(user.getImage())) {
+            String image = Base64.encodeToString(user.getImage(), Base64.DEFAULT);
+            editor.putString("image", image);
+        }
+
+        editor.commit();
+        prepareNavigationView();
     }
 }

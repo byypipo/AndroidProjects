@@ -5,10 +5,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.sebatmedikal.R;
@@ -16,11 +18,13 @@ import com.sebatmedikal.adapter.OperationListAdapter;
 import com.sebatmedikal.adapter.UserListAdapter;
 import com.sebatmedikal.mapper.Mapper;
 import com.sebatmedikal.remote.domain.Operation;
+import com.sebatmedikal.remote.domain.Role;
 import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.request.RequestModelGenerator;
 import com.sebatmedikal.task.BaseTask;
 import com.sebatmedikal.task.Performer;
+import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
@@ -31,6 +35,13 @@ import java.util.List;
  */
 public class UsersActivity extends BaseActivity {
     private UserListAdapter userListAdapter;
+
+    AutoCompleteTextView new_user_username;
+    AutoCompleteTextView new_user_password;
+    Spinner new_user_role;
+    AutoCompleteTextView new_user_firstname;
+    AutoCompleteTextView new_user_lastname;
+    AutoCompleteTextView new_user_email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +105,34 @@ public class UsersActivity extends BaseActivity {
 
                         }
                     });
+
+                    if (CompareUtil.equal(preferences.getString("roleid", null), getString(R.string.roleAdmin))) {
+                        Button addNewUser = (Button) findViewById(R.id.layout_users_new_user);
+                        addNewUser.setVisibility(View.VISIBLE);
+
+                        addNewUser.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                View layout_new_user = inflate(R.layout.layout_new_user);
+
+                                new_user_username = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_userName);
+                                new_user_password = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_password);
+                                new_user_role = (Spinner) layout_new_user.findViewById(R.id.layout_new_user_role);
+                                new_user_firstname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_firstName);
+                                new_user_lastname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_lastName);
+                                new_user_email = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_email);
+                                Button save = (Button) layout_new_user.findViewById(R.id.layout_new_user_save);
+
+                                save.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        addNewUserClick();
+                                    }
+                                });
+                            }
+                        });
+                    }
+
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
                 }
@@ -113,5 +152,64 @@ public class UsersActivity extends BaseActivity {
         //TODO:
 
         showProgress(false);
+    }
+
+    private void addNewUserClick() {
+        if (NullUtil.isNotNull(baseTask)) {
+            LogUtil.logMessage(getClass(), "Basetask not null");
+            return;
+        }
+
+        showProgress(true);
+
+        String username = new_user_username.getText().toString();
+        String password = new_user_password.getText().toString();
+
+        Role role = new Role();
+        role.setId(2);
+        if (CompareUtil.equalIgnoreCase("Admin", new_user_role.getSelectedItem().toString())) {
+            role.setId(1);
+        }
+        String firstname = new_user_firstname.getText().toString();
+        String lastname = new_user_lastname.getText().toString();
+        String email = new_user_email.getText().toString();
+
+        User newUser = new User();
+        newUser.setUsername(username);
+        newUser.setPassword(password);
+        newUser.setFirstName(firstname);
+        newUser.setLastName(lastname);
+        newUser.setEmail(email);
+        newUser.setRole(role);
+
+        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+        RequestModel requestModel = RequestModelGenerator.userCreate(getAccessToken(), newUser);
+
+        baseTask = new BaseTask(URL, requestModel, new Performer() {
+            @Override
+            public void perform(boolean success) {
+                User createdUser = Mapper.userMapper(baseTask.getContent());
+                String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+
+                baseTask = null;
+                showProgress(false);
+
+                if (isServerUnreachable) {
+                    showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (success) {
+                    showToast("User created");
+                } else {
+                    showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
+                }
+
+                prepareUsersActivity();
+            }
+        });
+
+        baseTask.execute((Void) null);
     }
 }

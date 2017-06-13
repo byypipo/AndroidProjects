@@ -11,6 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"></SearchView>
 
+    <Button
+        android:id="@+id/layout_users_new_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/newUser"
+        android:visibility="gone" />
+
     <ListView
         android:id="@+id/layout_users_listview"
         android:layout_width="match_parent"
