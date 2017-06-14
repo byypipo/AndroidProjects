@@ -185,7 +185,7 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_valueSettings) {
 
         } else if (id == R.id.nav_exit) {
-            if (getActivity() instanceof LoginActivity) {
+            if (getActivity() instanceof OperationsActivity) {
                 String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
                 LogUtil.logMessage(getClass(), "URL: " + URL);
                 RequestModel requestModel = RequestModelGenerator.userLogout(preferences.getString("accessToken", null), preferences.getString("username", null));
