@@ -1,11 +1,18 @@
 package com.sebatmedikal.fcm;
 
+import android.annotation.TargetApi;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Region;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -16,8 +23,10 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.sebatmedikal.R;
 import com.sebatmedikal.activity.LoginActivity;
 import com.sebatmedikal.activity.OperationsActivity;
+import com.sebatmedikal.activity.UsersActivity;
 import com.sebatmedikal.mapper.Mapper;
 import com.sebatmedikal.remote.domain.Operation;
+import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
@@ -56,12 +65,34 @@ public class MessagingService extends FirebaseMessagingService {
         String data = remoteMessage.getData().get("message");
         String notification = remoteMessage.getNotification().getBody();
 
+        BaseNotify baseNotify = new BaseNotify();
+        baseNotify.setContext(this);
+        baseNotify.setId(notificationID.getAndIncrement());
+
         Intent intent = null;
         if (CompareUtil.equal(remoteMessage.getNotification().getTitle(), "SERVER_ONLINE")) {
             intent = new Intent(this, LoginActivity.class);
+            baseNotify.setTitle(getString(R.string.SERVER_ONLINE));
+            baseNotify.setText(remoteMessage.getNotification().getBody());
         } else if (CompareUtil.equal(remoteMessage.getNotification().getTitle(), "NEW_OPERATION")) {
+            Operation operation = Mapper.operationMapper(data);
             intent = new Intent(this, OperationsActivity.class);
-            intent.putExtra("operation", Mapper.operationMapper(data));
+            intent.putExtra("operation", operation);
+            baseNotify.setTitle(getString(R.string.NEW_OPERATION));
+            baseNotify.setText(getString(R.string.operation_createdBy) + ": " + operation.getCreatedBy());
+            baseNotify.setBigText(getString(R.string.operation_createdBy) + ": " + operation.getCreatedBy());
+            baseNotify.setBigTitle(getString(R.string.NEW_OPERATION));
+            baseNotify.setSummaryText(getString(R.string.NEW_OPERATION_BY, operation.getCreatedBy(), operation.getOperationType().getOperationTypeName()));
+        } else if (CompareUtil.equal(remoteMessage.getNotification().getTitle(), "LOGIN")) {
+            User user = Mapper.userMapper(data);
+            intent = new Intent(this, UsersActivity.class);
+            baseNotify.setTitle(getString(R.string.LOGIN, user.getFirstName() + " " + user.getLastName()));
+            baseNotify.setText(remoteMessage.getNotification().getBody());
+        } else if (CompareUtil.equal(remoteMessage.getNotification().getTitle(), "LOGOUT")) {
+            User user = Mapper.userMapper(data);
+            intent = new Intent(this, UsersActivity.class);
+            baseNotify.setTitle(getString(R.string.LOGOUT, user.getFirstName() + " " + user.getLastName()));
+            baseNotify.setText(remoteMessage.getNotification().getBody());
         }
 
         if (NullUtil.isNull(intent)) {
@@ -76,18 +107,7 @@ public class MessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.sebat_medikal)
-                .setContentTitle(remoteMessage.getNotification().getTitle())
-                .setContentText(remoteMessage.getNotification().getBody())
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
-
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(notificationID.getAndIncrement(), notificationBuilder.build());
+        baseNotify.setPendingIntent(pendingIntent);
+        baseNotify.createNotify();
     }
 }

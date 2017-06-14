@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,7 +24,10 @@ import com.sebatmedikal.task.BaseTask;
 import com.sebatmedikal.task.Performer;
 import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.ImageUtil;
+import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
+
+import java.io.IOException;
 
 public class AccountSettingsActivity extends BaseActivity {
     private User me;
@@ -45,7 +49,6 @@ public class AccountSettingsActivity extends BaseActivity {
 
     private String picturePath;
     private static int RESULT_LOAD_IMAGE = 1;
-    private int degree = 0;
     private boolean imageChanged = false;
 
     @Override
@@ -247,7 +250,7 @@ public class AccountSettingsActivity extends BaseActivity {
 
         if (imageChanged) {
             Bitmap newImageBitmap = ((BitmapDrawable) image.getDrawable()).getBitmap();
-            byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, 0.1);
+            byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
             me.setImage(newImage);
             update = true;
         }
@@ -303,7 +306,9 @@ public class AccountSettingsActivity extends BaseActivity {
             picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            image.setImageBitmap(BitmapFactory.decodeFile(picturePath));
+            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
+
+            image.setImageBitmap(bitmap);
             imageChanged = true;
         }
     }

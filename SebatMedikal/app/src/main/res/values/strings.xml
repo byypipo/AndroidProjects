@@ -126,5 +126,11 @@
     <!--FCM-->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
+    <!--notify-->
+    <string name="SERVER_ONLINE">Sunucu açıldı</string>
+    <string name="NEW_OPERATION">Yeni işlem</string>
+    <string name="NEW_OPERATION_BY">%1$s tarafından %2$s işlemi yapıldı</string>
+    <string name="LOGIN">%1$s çevrimiçi</string>
+    <string name="LOGOUT">%1$s çevrimdışı</string>
 
 </resources>
