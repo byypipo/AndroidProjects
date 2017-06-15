@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_brands"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    android:id="@+id/layout_products">
-    
+    android:paddingTop="@dimen/activity_vertical_margin">
+
     <SearchView
-        android:id="@+id/layout_products_searchview"
+        android:id="@+id/layout_brands_searchview"
         android:layout_width="match_parent"
         android:layout_height="40dp"></SearchView>
 
     <Button
-        android:id="@+id/layout_product_new_product_button"
+        android:id="@+id/layout_brands_new_brand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/newProduct"
+        android:text="@string/newBrand"
         android:visibility="gone" />
 
     <ListView
-        android:id="@+id/layout_products_listview"
+        android:id="@+id/layout_brands_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

@@ -29,9 +29,9 @@
                 android:icon="@drawable/envelope"
                 android:title="@string/messages" />
             <item
-                android:id="@+id/nav_valueSettings"
+                android:id="@+id/nav_brands"
                 android:icon="@drawable/parameters"
-                android:title="@string/valueSettings" />
+                android:title="@string/brands" />
             <item
                 android:id="@+id/nav_exit"
                 android:icon="@drawable/exit"

@@ -42,8 +42,8 @@
             android:label="@string/title_activity_users"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.NotificationActivity"
-            android:label="@string/title_activity_notifications"
+            android:name=".activity.BrandsActivity"
+            android:label="@string/title_activity_brands"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data

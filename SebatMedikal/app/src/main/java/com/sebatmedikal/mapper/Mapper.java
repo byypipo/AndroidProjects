@@ -62,6 +62,20 @@ public class Mapper {
         return null;
     }
 
+    public static List<String> stringListMapper(Object content) {
+        try {
+            String contentString = prepareContentString(content);
+
+            List<String> list = mapper.readValue(contentString,
+                    new TypeReference<List<String>>() {
+                    });
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Brand brandMapper(Object content) {
         try {
             String contentString = prepareContentString(content);

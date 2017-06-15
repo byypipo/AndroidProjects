@@ -61,6 +61,7 @@
     <string name="title_activity_operations">İşlemler</string>
     <string name="title_activity_account_settings">Hesap Ayarları</string>
     <string name="title_activity_users">Kullanıcılar</string>
+    <string name="title_activity_brands">Markalar</string>
     <string name="title_activity_notifications">Bildirimler</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -73,7 +74,7 @@
     <string name="products">Ürünler</string>
     <string name="myAccount">Hesabım</string>
     <string name="accountSettings">Hesap Ayarları</string>
-    <string name="valueSettings">Değişken ayarları</string>
+    <string name="brands">Markalar</string>
     <string name="messages">Mesajlar</string>
     <string name="users">Kullanıcılar</string>
     <string name="exit">Çıkış</string>
@@ -82,6 +83,13 @@
     <string name="newUser">Yeni Kullanıcı</string>
     <string name="roleAdmin">1</string>
     <string name="roleUser">2</string>
+    <!--brands-->
+    <string name="newBrand">Yeni Marka</string>
+    <string name="createdBy">Oluşturan</string>
+    <string name="gotoProduts">Ürünleri gör</string>
+    <string name="productTypeCount">Ürün Sayısı</string>
+    <string name="unknown">Bilinmiyor</string>
+
 
     <!--navigation var-->
     <string name="unknownUser">Bilinmeyen Kullanıcı</string>
@@ -92,6 +100,7 @@
     <string name="price">Fiyat</string>
     <string name="totalPrice">Toplam Fiyat</string>
     <string name="brand">Marka</string>
+    <string name="brandName">Marka Adı</string>
     <string name="note">Not</string>
     <string name="stock">Stok</string>
     <string name="purchase">Alış</string>
@@ -101,6 +110,8 @@
     <string name="currency">TL</string>
     <string name="defaultPrice">0 TL</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="newProduct">Yeni Ürün</string>
+    <string name="barcod">Barkod</string>
 
     <!--operation_details-->
     <string name="operation_note">İşlem notu</string>

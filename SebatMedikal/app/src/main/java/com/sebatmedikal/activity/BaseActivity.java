@@ -180,10 +180,8 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_accountSettings) {
             goToActivity(AccountSettingsActivity.class);
         } else if (id == R.id.nav_messages) {
-            //TODO DELETE
-//            NotificationUtil.test_InlineReplyNotification(this, test_NotificationId++);
-        } else if (id == R.id.nav_valueSettings) {
-
+        } else if (id == R.id.nav_brands) {
+            goToActivity(BrandsActivity.class);
         } else if (id == R.id.nav_exit) {
             if (getActivity() instanceof OperationsActivity) {
                 String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);

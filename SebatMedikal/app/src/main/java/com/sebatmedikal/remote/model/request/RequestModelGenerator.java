@@ -21,6 +21,11 @@ public class RequestModelGenerator {
         return requestModel;
     }
 
+    public static RequestModel findAllOnlyName(String accessToken) {
+        RequestModel requestModel = prepareRequestModel(accessToken, "findAllOnlyName");
+        return requestModel;
+    }
+
     public static RequestModel findOne(String accessToken, String id) {
         RequestModel requestModel = prepareRequestModel(accessToken, "findOne");
         requestModel.setParameter01(id);
@@ -132,6 +137,7 @@ public class RequestModelGenerator {
 
     public static RequestModelProduct productCreate(String accessToken, Product product) {
         RequestModelProduct requestModelProduct = new RequestModelProduct();
+        requestModelProduct.setAccessToken(accessToken);
         requestModelProduct.setOperation("create");
         requestModelProduct.setProduct(product);
         return requestModelProduct;
