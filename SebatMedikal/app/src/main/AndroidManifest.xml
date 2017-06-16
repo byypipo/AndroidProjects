@@ -5,6 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <!--camera-->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!--camera-->
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/application_icon"
@@ -44,6 +51,10 @@
         <activity
             android:name=".activity.BrandsActivity"
             android:label="@string/title_activity_brands"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data

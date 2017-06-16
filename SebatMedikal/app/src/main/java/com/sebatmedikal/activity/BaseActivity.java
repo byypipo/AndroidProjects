@@ -34,6 +34,7 @@ import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.request.RequestModelGenerator;
 import com.sebatmedikal.task.BaseTask;
 import com.sebatmedikal.task.Performer;
+import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
@@ -147,7 +148,6 @@ public class BaseActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -155,7 +155,8 @@ public class BaseActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == R.id.action_settings) {
+        if (id == R.id.settings) {
+            goToActivity(SettingsActivity.class);
             return true;
         }
 
@@ -183,42 +184,43 @@ public class BaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_brands) {
             goToActivity(BrandsActivity.class);
         } else if (id == R.id.nav_exit) {
-            if (getActivity() instanceof OperationsActivity) {
-                String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
-                LogUtil.logMessage(getClass(), "URL: " + URL);
-                RequestModel requestModel = RequestModelGenerator.userLogout(preferences.getString("accessToken", null), preferences.getString("username", null));
-                LogUtil.logMessage(getClass(), "CONTENT: " + requestModel.toString());
-
-                if (NullUtil.isNotNull(baseTask)) {
-                    return false;
-                }
-
-                baseTask = new BaseTask(URL, requestModel, new Performer() {
-                    @Override
-                    public void perform(boolean success) {
-                        LogUtil.logMessage(BaseTask.class, "success: " + success);
-                        baseTask = null;
-                    }
-                });
-
-                baseTask.execute((Void) null);
-
-                editor.remove("password");
-                editor.remove("login");
-                editor.remove("lastname");
-                editor.remove("fullname");
-                editor.remove("role");
-                editor.remove("image");
-                editor.commit();
-            } else {
-                LogUtil.logMessage(getClass(), "else " + getActivity());
-            }
-            LogUtil.logMessage(getClass(), "finally " + getActivity());
+            logout();
 
             finish();
         }
 
         return true;
+    }
+
+    protected void logout() {
+        if (NullUtil.isNotNull(baseTask)) {
+            return;
+        }
+
+        String URL = getServerIp() + getString(R.string.serviceTagUser);
+        LogUtil.logMessage(getClass(), "URL: " + URL);
+        RequestModel requestModel = RequestModelGenerator.userLogout(preferences.getString("accessToken", null), preferences.getString("username", null));
+        LogUtil.logMessage(getClass(), "CONTENT: " + requestModel.toString());
+
+        baseTask = new BaseTask(URL, requestModel, new Performer() {
+            @Override
+            public void perform(boolean success) {
+                LogUtil.logMessage(BaseTask.class, "success: " + success);
+                baseTask = null;
+            }
+        });
+
+        baseTask.execute((Void) null);
+
+        editor.remove("password");
+        editor.remove("login");
+        editor.remove("lastname");
+        editor.remove("fullname");
+        editor.remove("role");
+        editor.remove("image");
+        editor.commit();
+
+        goToActivity(LoginActivity.class);
     }
 
     protected View inflate(int layout) {
@@ -276,4 +278,29 @@ public class BaseActivity extends AppCompatActivity
         editor.commit();
         prepareNavigationView();
     }
+
+    protected void setEditor(String key, String value) {
+        editor.putString(key, value);
+        editor.commit();
+    }
+
+    protected boolean isNotificationEnable() {
+        //TODO: IGNORED
+        return CompareUtil.isTrue(preferences.getString("notificationEnable", "true"));
+    }
+
+    protected String getServerIp() {
+        String serverIp = preferences.getString("serverIp", null);
+
+        LogUtil.logMessage(getClass(), "Preferences serverIp: " + serverIp);
+        if (NullUtil.isNull(serverIp)) {
+            serverIp = getString(R.string.serverURL);
+            setEditor("serverIp", serverIp);
+            LogUtil.logMessage(getClass(), "Locale serverIp: " + serverIp);
+        }
+
+        LogUtil.logMessage(getClass(), "Return serverIp: " + serverIp);
+        return serverIp;
+    }
+
 }

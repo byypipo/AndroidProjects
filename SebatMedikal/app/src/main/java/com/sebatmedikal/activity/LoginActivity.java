@@ -109,7 +109,7 @@ public class LoginActivity extends BaseActivity {
         } else {
             showProgress(true);
 
-            String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+            String URL = getServerIp() + getString(R.string.serviceTagUser);
             LogUtil.logMessage(getClass(), "URL: " + URL);
             RequestModel requestModel = RequestModelGenerator.userLogin(username, password, fcmRegistrationId);
 

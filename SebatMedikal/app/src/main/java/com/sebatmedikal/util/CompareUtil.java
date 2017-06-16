@@ -20,12 +20,20 @@ public class CompareUtil {
 
     public static boolean equalIgnoreCase(Object object01, Object object02) {
         if (!(object01 instanceof String) || !(object02 instanceof String)) {
-            return object01.equals(object02);
+            return equal(object01, object02);
         }
 
         String string01 = (String) object01;
         String string02 = (String) object02;
 
         return string01.toUpperCase(Locale.US).equals(string02.toUpperCase(Locale.US));
+    }
+
+    public static boolean isTrue(Object object) {
+        if (object instanceof Boolean) {
+            return (boolean) object;
+        }
+
+        return equalIgnoreCase(object, "true");
     }
 }

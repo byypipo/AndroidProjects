@@ -2,7 +2,6 @@ package com.sebatmedikal.activity;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,7 +11,6 @@ import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -22,14 +20,12 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.sebatmedikal.R;
 import com.sebatmedikal.adapter.ProductListAdapter;
 import com.sebatmedikal.mapper.Mapper;
 import com.sebatmedikal.remote.domain.Brand;
-import com.sebatmedikal.remote.domain.Operation;
 import com.sebatmedikal.remote.domain.Product;
 import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.request.RequestModelGenerator;
@@ -41,7 +37,6 @@ import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsActivity extends BaseActivity {
@@ -82,7 +77,7 @@ public class ProductsActivity extends BaseActivity {
         selectedProduct = null;
         showProgress(true);
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagProduct);
+        String URL = getServerIp() + getString(R.string.serviceTagProduct);
         RequestModel requestModel = RequestModelGenerator.findAll(getAccessToken());
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
@@ -91,12 +86,19 @@ public class ProductsActivity extends BaseActivity {
                 List<Product> productList = Mapper.productListMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 
@@ -138,7 +140,7 @@ public class ProductsActivity extends BaseActivity {
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                addNewProductButtonClick();
+                                loadNewProductLayout();
                             }
                         });
                         button.setVisibility(View.VISIBLE);
@@ -157,7 +159,7 @@ public class ProductsActivity extends BaseActivity {
         baseTask.execute((Void) null);
     }
 
-    private void addNewProductButtonClick() {
+    private void loadNewProductLayout() {
         if (NullUtil.isNotNull(baseTask)) {
             return;
         }
@@ -190,25 +192,32 @@ public class ProductsActivity extends BaseActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addNewProductClick();
+                addNewProductProcess();
             }
         });
 
         RequestModel requestModel = RequestModelGenerator.findAllOnlyName(getAccessToken());
-        String URL = getActivity().getString(R.string.serverURL) + getActivity().getString(R.string.serviceTagBrand);
+        String URL = getServerIp() + getActivity().getString(R.string.serviceTagBrand);
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
             @Override
             public void perform(boolean success) {
                 List<String> brandNames = Mapper.stringListMapper(baseTask.getContent());
-                boolean isServerUnreachable = baseTask.isServerUnreachable();
                 String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 
@@ -263,7 +272,7 @@ public class ProductsActivity extends BaseActivity {
         newOperation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newOperationClick();
+                loadNewOperationLayout();
             }
         });
 
@@ -271,7 +280,7 @@ public class ProductsActivity extends BaseActivity {
         showProgress(false);
     }
 
-    private void newOperationClick() {
+    private void loadNewOperationLayout() {
         if (NullUtil.isNull(selectedProduct)) {
             return;
         }
@@ -316,53 +325,64 @@ public class ProductsActivity extends BaseActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (NullUtil.isNotNull(baseTask)) {
-                    return;
-                }
-
-                showProgress(true);
-
-                String countPrefix = "+";
-                if (CompareUtil.equalIgnoreCase("SATIM", operationType.getSelectedItem().toString())) {
-                    countPrefix = "-";
-                }
-
-                LogUtil.logMessage(getClass(), "operationType.getSelectedItem().toString(): " + operationType.getSelectedItem().toString());
-                LogUtil.logMessage(getClass(), "countPrefix + operationCount.getText().toString(): " + (countPrefix + operationCount.getText().toString()));
-
-                RequestModel requestModel = RequestModelGenerator.productNewOperation(getAccessToken(), selectedProduct.getId() + "", countPrefix + operationCount.getText().toString(), operationNote.getText().toString());
-                String URL = getActivity().getString(R.string.serverURL) + getActivity().getString(R.string.serviceTagProduct);
-
-                baseTask = new BaseTask(URL, requestModel, new Performer() {
-                    @Override
-                    public void perform(boolean success) {
-                        boolean isServerUnreachable = baseTask.isServerUnreachable();
-                        String errorMessage = baseTask.getErrorMessage();
-
-                        baseTask = null;
-                        showProgress(false);
-
-                        if (isServerUnreachable) {
-                            showToast(getActivityString(R.string.serverUnreachable));
-                            return;
-                        }
-
-                        if (success) {
-                            showToast("Operation success: " + success);
-                        } else {
-                            showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
-                        }
-
-                        prepareProductsActivity();
-                    }
-                });
-
-                baseTask.execute((Void) null);
+                addNewOperationProcess();
             }
         });
     }
 
-    private void addNewProductClick() {
+    private void addNewOperationProcess() {
+        if (NullUtil.isNotNull(baseTask)) {
+            return;
+        }
+
+        showProgress(true);
+
+        String countPrefix = "+";
+        if (CompareUtil.equalIgnoreCase("SATIM", operationType.getSelectedItem().toString())) {
+            countPrefix = "-";
+        }
+
+        LogUtil.logMessage(getClass(), "operationType.getSelectedItem().toString(): " + operationType.getSelectedItem().toString());
+        LogUtil.logMessage(getClass(), "countPrefix + operationCount.getText().toString(): " + (countPrefix + operationCount.getText().toString()));
+
+        RequestModel requestModel = RequestModelGenerator.productNewOperation(getAccessToken(), selectedProduct.getId() + "", countPrefix + operationCount.getText().toString(), operationNote.getText().toString());
+        String URL = getServerIp() + getActivity().getString(R.string.serviceTagProduct);
+
+        baseTask = new BaseTask(URL, requestModel, new Performer() {
+            @Override
+            public void perform(boolean success) {
+                String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
+
+                baseTask = null;
+                showProgress(false);
+
+                if (isServerUnreachable) {
+                    showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
+                    return;
+                }
+
+                if (success) {
+                    showToast("Operation success: " + success);
+                } else {
+                    showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
+                }
+
+                prepareProductsActivity();
+            }
+        });
+
+        baseTask.execute((Void) null);
+    }
+
+    private void addNewProductProcess() {
         if (NullUtil.isNotNull(baseTask)) {
             return;
         }
@@ -387,19 +407,26 @@ public class ProductsActivity extends BaseActivity {
         }
 
         RequestModel requestModel = RequestModelGenerator.productCreate(getAccessToken(), newProduct);
-        String URL = getActivity().getString(R.string.serverURL) + getActivity().getString(R.string.serviceTagProduct);
+        String URL = getServerIp() + getActivity().getString(R.string.serviceTagProduct);
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
             @Override
             public void perform(boolean success) {
-                boolean isServerUnreachable = baseTask.isServerUnreachable();
                 String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 

@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 
 import com.sebatmedikal.activity.OperationsActivity;
 import com.sebatmedikal.mapper.Mapper;
+import com.sebatmedikal.remote.configuration.ErrorCodes;
 import com.sebatmedikal.remote.model.request.RequestModel;
 import com.sebatmedikal.remote.model.response.ResponseModel;
 import com.sebatmedikal.remote.model.response.ResponseModelError;
@@ -28,6 +29,7 @@ public class BaseTask extends AsyncTask<Void, Void, Boolean> {
     private String errorMessage;
 
     private boolean serverUnreachable = false;
+    private boolean logout = false;
 
     public BaseTask(String url, RequestModel requestModel, Performer performer) {
         this.url = url;
@@ -54,6 +56,11 @@ public class BaseTask extends AsyncTask<Void, Void, Boolean> {
             if (responseModel instanceof ResponseModelError) {
                 ResponseModelError responseModelError = (ResponseModelError) responseModel;
                 errorMessage = responseModelError.getError();
+
+                if (CompareUtil.equal(responseModelError.getErrorCode(), ErrorCodes.BAD_REQUEST)) {
+                    logout = true;
+                }
+
                 return false;
             }
 
@@ -87,6 +94,10 @@ public class BaseTask extends AsyncTask<Void, Void, Boolean> {
 
     public boolean isServerUnreachable() {
         return serverUnreachable;
+    }
+
+    public boolean isLogout() {
+        return logout;
     }
 
     @Override

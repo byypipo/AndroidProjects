@@ -57,7 +57,7 @@ public class UsersActivity extends BaseActivity {
 
         showProgress(true);
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+        String URL = getServerIp() + getString(R.string.serviceTagUser);
         RequestModel requestModel = RequestModelGenerator.findAll(getAccessToken());
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
@@ -66,12 +66,19 @@ public class UsersActivity extends BaseActivity {
                 List<User> userList = Mapper.userListMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 
@@ -113,22 +120,7 @@ public class UsersActivity extends BaseActivity {
                         addNewUser.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                View layout_new_user = inflate(R.layout.layout_new_user);
-
-                                new_user_username = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_userName);
-                                new_user_password = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_password);
-                                new_user_role = (Spinner) layout_new_user.findViewById(R.id.layout_new_user_role);
-                                new_user_firstname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_firstName);
-                                new_user_lastname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_lastName);
-                                new_user_email = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_email);
-                                Button save = (Button) layout_new_user.findViewById(R.id.layout_new_user_save);
-
-                                save.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        addNewUserClick();
-                                    }
-                                });
+                                loadNewUserLayout();
                             }
                         });
                     }
@@ -140,6 +132,25 @@ public class UsersActivity extends BaseActivity {
         });
 
         baseTask.execute((Void) null);
+    }
+
+    private void loadNewUserLayout() {
+        View layout_new_user = inflate(R.layout.layout_new_user);
+
+        new_user_username = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_userName);
+        new_user_password = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_password);
+        new_user_role = (Spinner) layout_new_user.findViewById(R.id.layout_new_user_role);
+        new_user_firstname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_firstName);
+        new_user_lastname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_lastName);
+        new_user_email = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_email);
+        Button save = (Button) layout_new_user.findViewById(R.id.layout_new_user_save);
+
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewUserProcess();
+            }
+        });
     }
 
     private void userListClick(User user) {
@@ -154,7 +165,7 @@ public class UsersActivity extends BaseActivity {
         showProgress(false);
     }
 
-    private void addNewUserClick() {
+    private void addNewUserProcess() {
         if (NullUtil.isNotNull(baseTask)) {
             LogUtil.logMessage(getClass(), "Basetask not null");
             return;
@@ -182,21 +193,27 @@ public class UsersActivity extends BaseActivity {
         newUser.setEmail(email);
         newUser.setRole(role);
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+        String URL = getServerIp() + getString(R.string.serviceTagUser);
         RequestModel requestModel = RequestModelGenerator.userCreate(getAccessToken(), newUser);
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
             @Override
             public void perform(boolean success) {
-                User createdUser = Mapper.userMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 

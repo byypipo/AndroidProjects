@@ -56,7 +56,7 @@ public class OperationsActivity extends BaseActivity {
 
         showProgress(true);
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagOperation);
+        String URL = getServerIp() + getString(R.string.serviceTagOperation);
         RequestModel requestModel = RequestModelGenerator.page(getAccessToken(), lastInitializedPageIndex + "");
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
@@ -65,12 +65,19 @@ public class OperationsActivity extends BaseActivity {
                 List<Operation> operationList = Mapper.operationListMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 

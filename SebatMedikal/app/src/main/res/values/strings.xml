@@ -32,6 +32,7 @@
     <string name="serviceTagOperationType">/operationTypesRest</string>
     <string name="serviceTagBrand">/brandsRest</string>
     <string name="serverUnreachable">Server kullanılabilir durumda değil</string>
+    <string name="userLogout">Kullanıcı çevrimdışı</string>
 
     <string name="createOperationURL">http://192.168.1.107:8080/productsRest/%1$d/operation/%2$d</string>
 
@@ -62,15 +63,16 @@
     <string name="title_activity_account_settings">Hesap Ayarları</string>
     <string name="title_activity_users">Kullanıcılar</string>
     <string name="title_activity_brands">Markalar</string>
+    <string name="title_activity_settings">Ayarlar</string>
     <string name="title_activity_notifications">Bildirimler</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Ayarlar</string>
 
     <!--menu-->
-    <string name="baseActivity">Ana Sayfa</string>
+    <string name="operationsActivity">İşlemler</string>
     <string name="products">Ürünler</string>
     <string name="myAccount">Hesabım</string>
     <string name="accountSettings">Hesap Ayarları</string>
@@ -121,6 +123,14 @@
 
     <!--operation_types-->
     <string name="operation_type_prompt">Lütfen İşlem Tipini Seçiniz</string>
+    <string name="host">Sunucu Ip</string>
+    <string name="settingsFormat">Varsayılan Ayarlar</string>
+
+    <!--operation_types-->
+    <string name="notifications">Bildirimler</string>
+    <string name="on">Açık</string>
+    <string name="off">Kapalı</string>
+
 
     <string name="more">Daha fazla</string>
 
@@ -137,11 +147,15 @@
     <!--FCM-->
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 
-    <!--notify-->
     <string name="SERVER_ONLINE">Sunucu açıldı</string>
     <string name="NEW_OPERATION">Yeni işlem</string>
     <string name="NEW_OPERATION_BY">%1$s tarafından %2$s işlemi yapıldı</string>
     <string name="LOGIN">%1$s çevrimiçi</string>
     <string name="LOGOUT">%1$s çevrimdışı</string>
 
+    <string name="toggle_turn_off">Kapalı</string>
+    <string name="toggle_turn_on">Açık</string>
+
+    <!--camera-->
+    <string name="capture">Çek</string>
 </resources>

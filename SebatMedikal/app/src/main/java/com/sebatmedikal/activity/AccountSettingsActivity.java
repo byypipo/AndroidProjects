@@ -167,7 +167,7 @@ public class AccountSettingsActivity extends BaseActivity {
 
         showProgress(true);
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+        String URL = getServerIp() + getString(R.string.serviceTagUser);
         RequestModel requestModel = RequestModelGenerator.findOne(getAccessToken(), userid);
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
@@ -176,12 +176,19 @@ public class AccountSettingsActivity extends BaseActivity {
                 me = Mapper.userMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 
@@ -260,21 +267,27 @@ public class AccountSettingsActivity extends BaseActivity {
             return;
         }
 
-        String URL = getString(R.string.serverURL) + getString(R.string.serviceTagUser);
+        String URL = getServerIp() + getString(R.string.serviceTagUser);
         RequestModel requestModel = RequestModelGenerator.userUpdate(getAccessToken(), me);
 
         baseTask = new BaseTask(URL, requestModel, new Performer() {
             @Override
             public void perform(boolean success) {
-//                me = Mapper.userMapper(baseTask.getContent());
                 String errorMessage = baseTask.getErrorMessage();
                 boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
 
                 baseTask = null;
                 showProgress(false);
 
                 if (isServerUnreachable) {
                     showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
                     return;
                 }
 

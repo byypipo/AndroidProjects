@@ -5,11 +5,19 @@
         <item
             android:id="@+id/nav_main"
             android:icon="@drawable/home"
-            android:title="@string/baseActivity" />
+            android:title="@string/operationsActivity" />
         <item
             android:id="@+id/nav_products"
             android:icon="@drawable/products"
             android:title="@string/products" />
+        <item
+            android:id="@+id/nav_brands"
+            android:icon="@drawable/parameters"
+            android:title="@string/brands" />
+        <item
+            android:id="@+id/nav_users"
+            android:icon="@drawable/users"
+            android:title="@string/users" />
     </group>
 
     <item android:title="@string/myAccount">
@@ -21,17 +29,9 @@
                 android:icon="@drawable/settings"
                 android:title="@string/accountSettings" />
             <item
-                android:id="@+id/nav_users"
-                android:icon="@drawable/users"
-                android:title="@string/users" />
-            <item
                 android:id="@+id/nav_messages"
                 android:icon="@drawable/envelope"
                 android:title="@string/messages" />
-            <item
-                android:id="@+id/nav_brands"
-                android:icon="@drawable/parameters"
-                android:title="@string/brands" />
             <item
                 android:id="@+id/nav_exit"
                 android:icon="@drawable/exit"
