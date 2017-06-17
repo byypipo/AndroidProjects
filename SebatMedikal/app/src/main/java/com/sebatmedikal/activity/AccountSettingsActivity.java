@@ -66,7 +66,6 @@ public class AccountSettingsActivity extends BaseActivity {
         Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
 
         image.setImageBitmap(bitmap);
-        imageChanged = true;
         prepareAccountSettingsActivity();
         change(true);
     }

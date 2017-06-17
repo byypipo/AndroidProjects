@@ -4,10 +4,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -96,17 +99,12 @@ public class OperationsActivity extends BaseActivity {
                         operationListAdapter = new OperationListAdapter(getActivity(), operationList);
                         listView.setAdapter(operationListAdapter);
 
-                        Button footerButton = new Button(getActivity());
-                        footerButton.setText(getString(R.string.more));
-                        listView.addFooterView(footerButton);
-
-                        footerButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                LogUtil.logMessage(getClass(), "ONCLICK");
-                                prepareOperationsActivity();
-                            }
-                        });
+                        View footerView = getLayoutInflater().inflate(R.layout.listview_footer, null);
+                        ImageButton footerButton = (ImageButton) footerView.findViewById(R.id.footer_more);
+                        footerButton.setBackgroundResource(R.drawable.more_black);
+                        footerView.setOnClickListener(footerClickListener);
+                        footerButton.setOnClickListener(footerClickListener);
+                        listView.addFooterView(footerView);
 
                         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                             @Override
@@ -143,6 +141,13 @@ public class OperationsActivity extends BaseActivity {
 
         baseTask.execute((Void) null);
     }
+
+    View.OnClickListener footerClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            prepareOperationsActivity();
+        }
+    };
 
     private void operationListClick(Operation operation) {
         if (NullUtil.isNull(operation)) {

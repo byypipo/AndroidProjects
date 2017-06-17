@@ -9,11 +9,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -55,6 +58,7 @@ public class BrandsActivity extends BaseActivity {
     private ImageView newBrandImage;
     private AutoCompleteTextView newBrandName;
     private AutoCompleteTextView newBrandNote;
+    private ImageButton newBrandSave;
     private boolean newBrandImageAdded = false;
 
     @Override
@@ -154,13 +158,13 @@ public class BrandsActivity extends BaseActivity {
 
         newBrandImage = (ImageView) view.findViewById(R.id.layout_brands_new_brand_image);
         newBrandName = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_name);
+        newBrandName.addTextChangedListener(textWatcher);
         newBrandNote = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_note);
-        Button save = (Button) view.findViewById(R.id.layout_brands_new_brand_save);
-
-        save.setOnClickListener(new View.OnClickListener() {
+        newBrandNote.addTextChangedListener(textWatcher);
+        newBrandSave = (ImageButton) view.findViewById(R.id.layout_brands_new_brand_save);
+        newBrandSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 addNewBrandProcess();
             }
         });
@@ -170,6 +174,7 @@ public class BrandsActivity extends BaseActivity {
             Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
 
             newBrandImage.setImageBitmap(bitmap);
+            change(true);
             newBrandImageAdded = true;
             capturedPictureFile = null;
         }
@@ -183,6 +188,31 @@ public class BrandsActivity extends BaseActivity {
 
         showProgress(false);
     }
+
+    private void change(boolean changed) {
+        if (changed) {
+            newBrandSave.setBackgroundResource(R.drawable.save_black);
+        } else {
+            newBrandSave.setBackgroundResource(R.drawable.save_white);
+        }
+    }
+
+    TextWatcher textWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            change(true);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
 
     @Override
     protected void capturedCamera() {
@@ -237,6 +267,7 @@ public class BrandsActivity extends BaseActivity {
                 }
 
                 if (success) {
+                    change(false);
                     showToast("Brand added");
                 } else {
                     showToast("Brand added success: " + success + "\nErrorMessage:" + errorMessage);
@@ -349,6 +380,7 @@ public class BrandsActivity extends BaseActivity {
 
             newBrandImage.setImageBitmap(bitmap);
             newBrandImageAdded = true;
+            change(true);
         }
     }
 }
