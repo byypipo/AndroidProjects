@@ -25,6 +25,11 @@ public class SettingsActivity extends BaseActivity {
         prepareSettingsActivity();
     }
 
+    @Override
+    protected void capturedCamera() {
+        //NOT USED
+    }
+
     private void prepareSettingsActivity() {
         View inflatedView = inflate(R.layout.layout_settings);
 

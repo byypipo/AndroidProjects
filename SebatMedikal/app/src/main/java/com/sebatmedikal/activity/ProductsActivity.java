@@ -69,6 +69,11 @@ public class ProductsActivity extends BaseActivity {
         prepareProductsActivity();
     }
 
+    @Override
+    protected void capturedCamera() {
+        //NOT USED
+    }
+
     private void prepareProductsActivity() {
         if (NullUtil.isNotNull(baseTask)) {
             return;

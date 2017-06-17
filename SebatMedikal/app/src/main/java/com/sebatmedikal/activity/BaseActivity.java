@@ -3,13 +3,21 @@ package com.sebatmedikal.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
+import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.util.Base64;
@@ -28,6 +36,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sebatmedikal.R;
+import com.sebatmedikal.camera.CameraPreview;
 import com.sebatmedikal.external.CircleImageView;
 import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.remote.model.request.RequestModel;
@@ -38,7 +47,14 @@ import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
-public class BaseActivity extends AppCompatActivity
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     protected static SharedPreferences preferences;
@@ -50,6 +66,11 @@ public class BaseActivity extends AppCompatActivity
 
     private DrawerLayout drawer;
     protected BaseTask baseTask = null;
+
+    protected static File capturedPictureFile;
+    private static final int MEDIA_TYPE_IMAGE = 1;
+
+    protected static int RESULT_LOAD_IMAGE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -301,6 +322,116 @@ public class BaseActivity extends AppCompatActivity
 
         LogUtil.logMessage(getClass(), "Return serverIp: " + serverIp);
         return serverIp;
+    }
+
+    //camera
+    protected void inflateSelectImageLayout() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle(getString(R.string.imageSource));
+        alertDialogBuilder
+                .setMessage(getString(R.string.pleaseSelectImageSource))
+                .setPositiveButton(R.string.gallery, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(
+                                Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+                        startActivityForResult(intent, RESULT_LOAD_IMAGE);
+                    }
+                })
+                .setNegativeButton(R.string.camera, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        loadCamera();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    protected void loadCamera() {
+        currentView = inflate(R.layout.layout_camera);
+
+        final Camera mCamera = getCameraInstance();
+        CameraPreview mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) currentView.findViewById(R.id.layout_camera_preview);
+        preview.addView(mPreview);
+
+        Button captureButton = (Button) currentView.findViewById(R.id.layout_camera_capture);
+        captureButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // get an image from the camera
+                        mCamera.takePicture(null, null, new Camera.PictureCallback() {
+                            @Override
+                            public void onPictureTaken(byte[] bytes, Camera camera) {
+                                capturedPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+                                try {
+                                    FileOutputStream fos = new FileOutputStream(capturedPictureFile);
+                                    fos.write(bytes);
+                                    fos.close();
+
+                                    try {
+                                        ExifInterface ei = new ExifInterface(capturedPictureFile.getAbsolutePath());
+                                        ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_90));
+                                        ei.saveAttributes();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                } catch (FileNotFoundException e) {
+                                    LogUtil.logMessage(getClass(), "File not found: " + e.getMessage());
+                                } catch (IOException e) {
+                                    LogUtil.logMessage(getClass(), "Error accessing file: " + e.getMessage());
+                                }
+
+                                mCamera.stopPreview();
+                                mCamera.release();
+
+                                capturedCamera();
+                            }
+                        });
+                    }
+                }
+        );
+    }
+
+    protected abstract void capturedCamera();
+
+    private static Camera getCameraInstance() {
+        Camera c = null;
+        try {
+            c = Camera.open(); // attempt to get a Camera instance
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Camera is not available (in use or does not exist)
+        }
+        return c; // returns null if camera is unavailable
+    }
+
+    private static File getOutputMediaFile(int type) {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "SebatMedikal");
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == MEDIA_TYPE_IMAGE) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "IMG_" + timeStamp + ".jpg");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
     }
 
 }

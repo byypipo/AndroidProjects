@@ -50,6 +50,11 @@ public class UsersActivity extends BaseActivity {
         prepareUsersActivity();
     }
 
+    @Override
+    protected void capturedCamera() {
+        //NOT USED
+    }
+
     private void prepareUsersActivity() {
         if (NullUtil.isNotNull(baseTask)) {
             return;

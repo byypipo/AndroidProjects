@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_main"
-            android:icon="@drawable/home"
+            android:icon="@drawable/operations"
             android:title="@string/operationsActivity" />
         <item
             android:id="@+id/nav_products"
@@ -12,7 +12,7 @@
             android:title="@string/products" />
         <item
             android:id="@+id/nav_brands"
-            android:icon="@drawable/parameters"
+            android:icon="@drawable/brands"
             android:title="@string/brands" />
         <item
             android:id="@+id/nav_users"
@@ -30,7 +30,7 @@
                 android:title="@string/accountSettings" />
             <item
                 android:id="@+id/nav_messages"
-                android:icon="@drawable/envelope"
+                android:icon="@drawable/message"
                 android:title="@string/messages" />
             <item
                 android:id="@+id/nav_exit"

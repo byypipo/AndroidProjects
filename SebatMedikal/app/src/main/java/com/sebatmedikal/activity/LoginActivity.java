@@ -45,6 +45,11 @@ public class LoginActivity extends BaseActivity {
         prepareLoginActivity();
     }
 
+    @Override
+    protected void capturedCamera() {
+        //NOT USED
+    }
+
     private void prepareLoginActivity() {
         View inflatedView = inflate(R.layout.layout_login);
 

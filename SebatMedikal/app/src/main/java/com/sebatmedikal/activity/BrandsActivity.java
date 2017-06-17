@@ -7,8 +7,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
@@ -20,7 +21,6 @@ import android.widget.TextView;
 
 import com.sebatmedikal.R;
 import com.sebatmedikal.adapter.BrandListAdapter;
-import com.sebatmedikal.camera.Capturer;
 import com.sebatmedikal.mapper.Mapper;
 import com.sebatmedikal.remote.domain.Brand;
 import com.sebatmedikal.remote.domain.Product;
@@ -33,6 +33,9 @@ import com.sebatmedikal.util.ImageUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,8 +43,6 @@ import java.util.List;
  */
 public class BrandsActivity extends BaseActivity {
     private BrandListAdapter brandListAdapter;
-    private static int RESULT_LOAD_IMAGE = 1;
-    private static int CAPTURE_LOAD_IMAGE = 2;
 
     private List<Product> brandProducts;
 
@@ -164,28 +165,33 @@ public class BrandsActivity extends BaseActivity {
             }
         });
 
+        if (NullUtil.isNotNull(capturedPictureFile)) {
+            String picturePath = capturedPictureFile.getAbsolutePath();
+            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
+
+            newBrandImage.setImageBitmap(bitmap);
+            newBrandImageAdded = true;
+            capturedPictureFile = null;
+        }
+
         newBrandImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //TODO: FIX
-//                View view = inflate(R.layout.layout_camera);
-//                Capturer capturer = new Capturer(getActivity(), view);
-//                String path = capturer.waitCaptureAndGetPath();
-//                LogUtil.logMessage(getClass(), "path: " + path);
-//                Intent intent = new Intent(Intent.ACTION_PICK);
-//                intent.putExtra("path", path);
-//                startActivityForResult(intent, CAPTURE_LOAD_IMAGE);
-
-                //GET IMAGE FROM FILE SYSTEM
-                Intent intent = new Intent(
-                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                startActivityForResult(intent, RESULT_LOAD_IMAGE);
+                inflateSelectImageLayout();
             }
         });
 
         showProgress(false);
+    }
+
+    @Override
+    protected void capturedCamera() {
+        String picturePath = capturedPictureFile.getAbsolutePath();
+        Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
+
+        newBrandImage.setImageBitmap(bitmap);
+        newBrandImageAdded = true;
+        loadNewBrandLayout();
     }
 
     private void addNewBrandProcess() {
@@ -273,46 +279,52 @@ public class BrandsActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
 
+                if (NullUtil.isNotNull(baseTask)) {
+                    return;
+                }
+
+                showProgress(true);
+
+                String URL = getServerIp() + getString(R.string.serviceTagBrand);
+                RequestModel requestModel = RequestModelGenerator.brandProducts(getAccessToken(), brand.getId() + "");
+
+                baseTask = new BaseTask(URL, requestModel, new Performer() {
+                    @Override
+                    public void perform(boolean success) {
+                        brandProducts = Mapper.productListMapper(baseTask.getContent());
+                        String errorMessage = baseTask.getErrorMessage();
+                        boolean isServerUnreachable = baseTask.isServerUnreachable();
+                        boolean isLogout = baseTask.isLogout();
+
+                        baseTask = null;
+                        showProgress(false);
+
+                        if (isServerUnreachable) {
+                            showToast(getActivityString(R.string.serverUnreachable));
+                            return;
+                        }
+
+                        if (isLogout) {
+                            showToast(getActivityString(R.string.userLogout));
+                            logout();
+                            return;
+                        }
+
+                        if (success) {
+                            selectedProductTypeCount.setText(brandProducts.size() + "");
+                        } else {
+                            showToast("Products success: " + success + "\nErrorMessage:" + errorMessage);
+                        }
+                    }
+                });
+
+                baseTask.execute((Void) null);
+
                 Intent intent = new Intent(getActivity(), ProductsActivity.class);
                 intent.putExtra("brandFilter", brand.getBrandName());
                 startActivity(intent);
             }
         });
-
-        String URL = getServerIp() + getString(R.string.serviceTagBrand);
-        RequestModel requestModel = RequestModelGenerator.brandProducts(getAccessToken(), brand.getId() + "");
-
-        baseTask = new BaseTask(URL, requestModel, new Performer() {
-            @Override
-            public void perform(boolean success) {
-                brandProducts = Mapper.productListMapper(baseTask.getContent());
-                String errorMessage = baseTask.getErrorMessage();
-                boolean isServerUnreachable = baseTask.isServerUnreachable();
-                boolean isLogout = baseTask.isLogout();
-
-                baseTask = null;
-                showProgress(false);
-
-                if (isServerUnreachable) {
-                    showToast(getActivityString(R.string.serverUnreachable));
-                    return;
-                }
-
-                if (isLogout) {
-                    showToast(getActivityString(R.string.userLogout));
-                    logout();
-                    return;
-                }
-
-                if (success) {
-                    selectedProductTypeCount.setText(brandProducts.size() + "");
-                } else {
-                    showToast("Products success: " + success + "\nErrorMessage:" + errorMessage);
-                }
-            }
-        });
-
-        baseTask.execute((Void) null);
 
         showProgress(false);
     }
@@ -333,12 +345,6 @@ public class BrandsActivity extends BaseActivity {
             String picturePath = cursor.getString(columnIndex);
             cursor.close();
 
-            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
-
-            newBrandImage.setImageBitmap(bitmap);
-            newBrandImageAdded = true;
-        } else if (requestCode == CAPTURE_LOAD_IMAGE) {
-            String picturePath = data.getStringExtra("path");
             Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
 
             newBrandImage.setImageBitmap(bitmap);

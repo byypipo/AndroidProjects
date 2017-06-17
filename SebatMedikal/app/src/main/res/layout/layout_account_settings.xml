@@ -50,6 +50,7 @@
                 <EditText
                     android:id="@+id/layout_account_settings_userNameET"
                     android:layout_width="165dp"
+                    android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
 
@@ -71,6 +72,7 @@
                     android:id="@+id/layout_account_settings_passwordET"
                     android:layout_width="165dp"
                     android:inputType="textPassword"
+                    android:singleLine="true"
                     android:visibility="gone" />
 
             </TableRow>
@@ -91,6 +93,7 @@
                 <EditText
                     android:id="@+id/layout_account_settings_firstNameET"
                     android:layout_width="165dp"
+                    android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
 
@@ -110,6 +113,7 @@
                 <EditText
                     android:id="@+id/layout_account_settings_lastNameET"
                     android:layout_width="165dp"
+                    android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
 
@@ -128,23 +132,21 @@
 
                 <EditText
                     android:id="@+id/layout_account_settings_emailET"
-                    android:inputType="textEmailAddress"
                     android:layout_width="165dp"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/table_row_top">
-
-                <Button
-                    android:id="@+id/layout_account_settings_save"
-                    android:layout_width="match_parent"
-                    android:layout_weight="1"
-                    android:text="@string/save"
-                    android:textAlignment="center" />
-
-            </TableRow>
-
         </TableLayout>
+
+        <ImageButton
+            android:id="@+id/layout_account_settings_save"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/save_white"/>
 
     </LinearLayout>
 

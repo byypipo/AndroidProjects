@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +44,7 @@ public class AccountSettingsActivity extends BaseActivity {
     private EditText lastnameET;
     private TextView emailTW;
     private EditText emailET;
+    private ImageButton save;
 
     private EditText visibledET;
     private TextView gonedTW;
@@ -56,7 +58,17 @@ public class AccountSettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         prepareAccountSettingsActivity();
-        setUserDetails();
+    }
+
+    @Override
+    protected void capturedCamera() {
+        String picturePath = capturedPictureFile.getAbsolutePath();
+        Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
+
+        image.setImageBitmap(bitmap);
+        imageChanged = true;
+        prepareAccountSettingsActivity();
+        change(true);
     }
 
     private void prepareAccountSettingsActivity() {
@@ -74,7 +86,7 @@ public class AccountSettingsActivity extends BaseActivity {
         emailTW = (TextView) currentView.findViewById(R.id.layout_account_settings_emailTW);
         emailET = (EditText) currentView.findViewById(R.id.layout_account_settings_emailET);
 
-        Button save = (Button) currentView.findViewById(R.id.layout_account_settings_save);
+        save = (ImageButton) currentView.findViewById(R.id.layout_account_settings_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -126,12 +138,11 @@ public class AccountSettingsActivity extends BaseActivity {
         image.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(
-                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                startActivityForResult(intent, RESULT_LOAD_IMAGE);
+                inflateSelectImageLayout();
             }
         });
+
+        setUserDetails();
     }
 
     private void refreshTableRow() {
@@ -141,8 +152,20 @@ public class AccountSettingsActivity extends BaseActivity {
 
         visibledET.setVisibility(View.GONE);
 
+        if (!CompareUtil.equal(gonedTW.getText().toString(), visibledET.getText().toString())) {
+            change(true);
+        }
+
         gonedTW.setText(visibledET.getText().toString());
         gonedTW.setVisibility(View.VISIBLE);
+    }
+
+    private void change(boolean changed) {
+        if (changed) {
+            save.setBackgroundResource(R.drawable.save_black);
+        } else {
+            save.setBackgroundResource(R.drawable.save_white);
+        }
     }
 
     private void changeTableRow(TextView goneTW, EditText visibleET) {
@@ -160,6 +183,11 @@ public class AccountSettingsActivity extends BaseActivity {
 
     private void setUserDetails() {
         if (NullUtil.isNotNull(baseTask)) {
+            return;
+        }
+
+        if (NullUtil.isNotNull(me)) {
+            prepareContent();
             return;
         }
 
@@ -194,6 +222,7 @@ public class AccountSettingsActivity extends BaseActivity {
 
                 if (success) {
                     prepareContent();
+                    change(false);
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
                 }
@@ -216,6 +245,15 @@ public class AccountSettingsActivity extends BaseActivity {
         if (NullUtil.isNotNull(me.getImage())) {
             Bitmap imageBMP = BitmapFactory.decodeByteArray(me.getImage(), 0, me.getImage().length);
             image.setImageBitmap(imageBMP);
+        }
+
+        if (NullUtil.isNotNull(capturedPictureFile)) {
+            String picturePath = capturedPictureFile.getAbsolutePath();
+            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
+
+            image.setImageBitmap(bitmap);
+            imageChanged = true;
+            capturedPictureFile = null;
         }
 
         if (NullUtil.isNotNull(me.getEmail())) {
@@ -260,6 +298,7 @@ public class AccountSettingsActivity extends BaseActivity {
             byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
             me.setImage(newImage);
             update = true;
+            imageChanged = false;
         }
 
         if (!update) {
@@ -294,6 +333,7 @@ public class AccountSettingsActivity extends BaseActivity {
                 if (success) {
                     preparedSharedPreferences(me);
                     prepareContent();
+                    change(false);
                     showToast("Account updated");
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
@@ -323,6 +363,7 @@ public class AccountSettingsActivity extends BaseActivity {
 
             image.setImageBitmap(bitmap);
             imageChanged = true;
+            change(true);
         }
     }
 }
