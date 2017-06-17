@@ -18,6 +18,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.util.Base64;
@@ -349,48 +350,70 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     protected void loadCamera() {
+        loadCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+    }
+
+    protected void loadCamera(final int cameraId) {
         currentView = inflate(R.layout.layout_camera);
 
-        final Camera mCamera = getCameraInstance();
+        final Camera mCamera = getCameraInstance(cameraId);
         CameraPreview mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) currentView.findViewById(R.id.layout_camera_preview);
         preview.addView(mPreview);
 
-        Button captureButton = (Button) currentView.findViewById(R.id.layout_camera_capture);
+        preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCamera.takePicture(null, null, new Camera.PictureCallback() {
+                    @Override
+                    public void onPictureTaken(byte[] bytes, Camera camera) {
+                        capturedPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(capturedPictureFile);
+                            fos.write(bytes);
+                            fos.close();
+
+                            try {
+                                ExifInterface ei = new ExifInterface(capturedPictureFile.getAbsolutePath());
+                                if (CompareUtil.equal(cameraId, Camera.CameraInfo.CAMERA_FACING_BACK)) {
+                                    ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_90));
+                                } else {
+                                    ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_270));
+                                }
+
+                                ei.saveAttributes();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } catch (FileNotFoundException e) {
+                            LogUtil.logMessage(getClass(), "File not found: " + e.getMessage());
+                        } catch (IOException e) {
+                            LogUtil.logMessage(getClass(), "Error accessing file: " + e.getMessage());
+                        }
+
+                        mCamera.stopPreview();
+                        mCamera.release();
+
+                        capturedCamera();
+                    }
+                });
+            }
+        });
+
+        ImageButton captureButton = (ImageButton) currentView.findViewById(R.id.layout_camera_change);
         captureButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        // get an image from the camera
-                        mCamera.takePicture(null, null, new Camera.PictureCallback() {
-                            @Override
-                            public void onPictureTaken(byte[] bytes, Camera camera) {
-                                capturedPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
+                        mCamera.stopPreview();
+                        mCamera.release();
 
-                                try {
-                                    FileOutputStream fos = new FileOutputStream(capturedPictureFile);
-                                    fos.write(bytes);
-                                    fos.close();
-
-                                    try {
-                                        ExifInterface ei = new ExifInterface(capturedPictureFile.getAbsolutePath());
-                                        ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_90));
-                                        ei.saveAttributes();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                } catch (FileNotFoundException e) {
-                                    LogUtil.logMessage(getClass(), "File not found: " + e.getMessage());
-                                } catch (IOException e) {
-                                    LogUtil.logMessage(getClass(), "Error accessing file: " + e.getMessage());
-                                }
-
-                                mCamera.stopPreview();
-                                mCamera.release();
-
-                                capturedCamera();
-                            }
-                        });
+                        if (CompareUtil.equal(cameraId, Camera.CameraInfo.CAMERA_FACING_BACK)) {
+                            loadCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
+                        } else {
+                            loadCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
+                        }
                     }
                 }
         );
@@ -398,22 +421,20 @@ public abstract class BaseActivity extends AppCompatActivity
 
     protected abstract void capturedCamera();
 
-    private static Camera getCameraInstance() {
+    private static Camera getCameraInstance(int cameraId) {
         Camera c = null;
         try {
-            c = Camera.open(); // attempt to get a Camera instance
+            c = Camera.open(cameraId); // attempt to get a Camera instance
         } catch (Exception e) {
             e.printStackTrace();
-            // Camera is not available (in use or does not exist)
         }
-        return c; // returns null if camera is unavailable
+        return c;
     }
 
     private static File getOutputMediaFile(int type) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), "SebatMedikal");
 
-        // Create the storage directory if it does not exist
         if (!mediaStorageDir.exists()) {
             if (!mediaStorageDir.mkdirs()) {
                 Log.d("MyCameraApp", "failed to create directory");
