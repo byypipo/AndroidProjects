@@ -106,7 +106,9 @@ public class BrandsActivity extends BaseActivity {
                     ListView listView = (ListView) inflatedView.findViewById(R.id.layout_brands_listview);
                     SearchView searchView = (SearchView) inflatedView.findViewById(R.id.layout_brands_searchview);
 
-                    brandListAdapter = new BrandListAdapter(getActivity(), brandList);
+                    long readedBrandsDate = preferences.getLong("readedBrandsDate", 0);
+
+                    brandListAdapter = new BrandListAdapter(getActivity(), brandList, new Date(readedBrandsDate));
                     listView.setAdapter(brandListAdapter);
 
                     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -142,6 +144,7 @@ public class BrandsActivity extends BaseActivity {
                         });
                     }
 
+                    setEditor("readedBrandsDate", new Date().getTime());
                 } else {
                     showToast("Brands success: " + success + "\nErrorMessage:" + errorMessage);
                 }

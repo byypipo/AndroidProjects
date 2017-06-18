@@ -77,7 +77,7 @@ public class MessagingService extends FirebaseMessagingService {
         } else if (CompareUtil.equal(remoteMessage.getNotification().getTitle(), "NEW_OPERATION")) {
             Operation operation = Mapper.operationMapper(data);
             intent = new Intent(this, OperationsActivity.class);
-            intent.putExtra("operation", operation);
+//            intent.putExtra("operation", operation);
             baseNotify.setTitle(getString(R.string.NEW_OPERATION));
             baseNotify.setText(getString(R.string.operation_createdBy) + ": " + operation.getCreatedBy());
             baseNotify.setBigText(getString(R.string.operation_createdBy) + ": " + operation.getCreatedBy());

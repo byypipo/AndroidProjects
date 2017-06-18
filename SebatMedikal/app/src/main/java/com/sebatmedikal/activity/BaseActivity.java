@@ -43,6 +43,8 @@ import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
+import java.util.Date;
+
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -350,6 +352,17 @@ public abstract class BaseActivity extends AppCompatActivity
         editor.putString("roleid", user.getRole().getId() + "");
         editor.putString("userid", user.getId() + "");
 
+        if (NullUtil.isNotNull(user.getReadedBrandsDate())) {
+            editor.putLong("readedBrandsDate", user.getReadedBrandsDate().getTime());
+        }
+        if (NullUtil.isNotNull(user.getReadedOperationsDate())) {
+            editor.putLong("readedOperationsDate", user.getReadedOperationsDate().getTime());
+        }
+
+        if (NullUtil.isNotNull(user.getReadedProductsDate())) {
+            editor.putLong("readedProductsDate", user.getReadedProductsDate().getTime());
+        }
+
         if (NullUtil.isNotNull(accessToken)) {
             editor.putString("accessToken", accessToken);
         }
@@ -363,8 +376,12 @@ public abstract class BaseActivity extends AppCompatActivity
         prepareNavigationView();
     }
 
-    protected void setEditor(String key, String value) {
-        editor.putString(key, value);
+    protected void setEditor(String key, Object value) {
+        if (value instanceof String) {
+            editor.putString(key, (String) value);
+        } else if (value instanceof Long) {
+            editor.putLong(key, (Long) value);
+        }
         editor.commit();
     }
 

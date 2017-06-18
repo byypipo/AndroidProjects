@@ -38,6 +38,7 @@ import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class ProductsActivity extends BaseActivity {
@@ -109,7 +110,9 @@ public class ProductsActivity extends BaseActivity {
                     ListView listView = (ListView) currentView.findViewById(R.id.layout_products_listview);
                     SearchView searchView = (SearchView) currentView.findViewById(R.id.layout_products_searchview);
 
-                    productListAdapter = new ProductListAdapter(getActivity(), productList);
+                    long readedProductsDate = preferences.getLong("readedProductsDate", 0);
+
+                    productListAdapter = new ProductListAdapter(getActivity(), productList, new Date(readedProductsDate));
 
                     listView.setAdapter(productListAdapter);
 
@@ -151,9 +154,12 @@ public class ProductsActivity extends BaseActivity {
                         searchView.setQuery(brandFilter, true);
                         LogUtil.logMessage(getClass(), "brandFilter: " + brandFilter + " filtered?");
                     }
+
+                    setEditor("readedProductsDate", new Date().getTime());
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
                 }
+
             }
         });
 

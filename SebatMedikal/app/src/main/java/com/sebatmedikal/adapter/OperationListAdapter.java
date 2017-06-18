@@ -1,6 +1,7 @@
 package com.sebatmedikal.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.AnimationDrawable;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,11 +32,15 @@ public class OperationListAdapter extends BaseAdapter implements Filterable {
 
     private List<Operation> mOriginalValues;
     private List<Operation> mDisplayedValues;
+    private Date lastReadedDate;
     LayoutInflater inflater;
 
-    public OperationListAdapter(Context context, List<Operation> mOperationArrayList) {
+    private boolean notReaded = true;
+
+    public OperationListAdapter(Context context, List<Operation> mOperationArrayList, Date lastReadedDate) {
         this.mOriginalValues = mOperationArrayList;
         this.mDisplayedValues = mOperationArrayList;
+        this.lastReadedDate = lastReadedDate;
         inflater = LayoutInflater.from(context);
     }
 
@@ -65,6 +72,7 @@ public class OperationListAdapter extends BaseAdapter implements Filterable {
         TextView productName;
         TextView operationCount;
         TextView operationType;
+        ImageView animation;
     }
 
     @Override
@@ -77,6 +85,7 @@ public class OperationListAdapter extends BaseAdapter implements Filterable {
             holder.productName = (TextView) convertView.findViewById(R.id.list_item_operations_productname);
             holder.operationCount = (TextView) convertView.findViewById(R.id.list_item_operations_count);
             holder.operationType = (TextView) convertView.findViewById(R.id.list_item_operations_operationtype);
+            holder.animation = (ImageView) convertView.findViewById(R.id.list_item_operations_animation);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -90,6 +99,14 @@ public class OperationListAdapter extends BaseAdapter implements Filterable {
             holder.productName.setText(productName);
             holder.operationCount.setText(mDisplayedValues.get(position).getCount() + "");
             holder.operationType.setText(mDisplayedValues.get(position).getOperationType().getOperationTypeName());
+
+            if (mDisplayedValues.get(position).getCreatedDate().after(lastReadedDate)) {
+                holder.animation.setBackgroundResource(R.drawable.animation_new);
+                AnimationDrawable animationDrawable = (AnimationDrawable) holder.animation.getBackground();
+                animationDrawable.start();
+            } else {
+                holder.animation.setBackgroundResource(R.color.transparent);
+            }
 
         } catch (Exception ex) {
             ex.printStackTrace();

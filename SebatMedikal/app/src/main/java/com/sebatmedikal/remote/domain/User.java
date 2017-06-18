@@ -2,6 +2,7 @@ package com.sebatmedikal.remote.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class User implements Serializable {
     private long id;
@@ -16,6 +17,9 @@ public class User implements Serializable {
     private String note;
     private boolean online;
     private Date lastLoginDate;
+    private Date readedOperationsDate;
+    private Date readedBrandsDate;
+    private Date readedProductsDate;
     private String createdBy;
     private Date createdDate;
 
@@ -117,6 +121,30 @@ public class User implements Serializable {
 
     public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
+    }
+
+    public Date getReadedOperationsDate() {
+        return readedOperationsDate;
+    }
+
+    public void setReadedOperationsDate(Date readedOperationsDate) {
+        this.readedOperationsDate = readedOperationsDate;
+    }
+
+    public Date getReadedBrandsDate() {
+        return readedBrandsDate;
+    }
+
+    public void setReadedBrandsDate(Date readedBrandsDate) {
+        this.readedBrandsDate = readedBrandsDate;
+    }
+
+    public Date getReadedProductsDate() {
+        return readedProductsDate;
+    }
+
+    public void setReadedProductsDate(Date readedProductsDate) {
+        this.readedProductsDate = readedProductsDate;
     }
 
     public String getCreatedBy() {

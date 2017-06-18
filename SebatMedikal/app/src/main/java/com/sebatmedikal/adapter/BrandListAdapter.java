@@ -3,6 +3,7 @@ package com.sebatmedikal.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,6 +21,7 @@ import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.util.NullUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -29,13 +31,15 @@ public class BrandListAdapter extends BaseAdapter implements Filterable {
 
     private List<Brand> mOriginalValues;
     private List<Brand> mDisplayedValues;
+    private Date lastReadedDate;
     LayoutInflater inflater;
 
     Drawable defaultImage;
 
-    public BrandListAdapter(Context context, List<Brand> mUserArrayList) {
+    public BrandListAdapter(Context context, List<Brand> mUserArrayList, Date lastReadedDate) {
         this.mOriginalValues = mUserArrayList;
         this.mDisplayedValues = mUserArrayList;
+        this.lastReadedDate = lastReadedDate;
         inflater = LayoutInflater.from(context);
     }
 
@@ -61,6 +65,7 @@ public class BrandListAdapter extends BaseAdapter implements Filterable {
         TextView name;
         TextView note;
         ImageView image;
+        ImageView animation;
     }
 
     @Override
@@ -73,6 +78,7 @@ public class BrandListAdapter extends BaseAdapter implements Filterable {
             holder.name = (TextView) convertView.findViewById(R.id.layout_brands_list_item_name);
             holder.note = (TextView) convertView.findViewById(R.id.layout_brands_list_item_note);
             holder.image = (ImageView) convertView.findViewById(R.id.layout_brands_list_item_image);
+            holder.animation = (ImageView) convertView.findViewById(R.id.layout_brands_list_item_animation);
             convertView.setTag(holder);
 
             if (NullUtil.isNull(defaultImage)) {
@@ -83,14 +89,24 @@ public class BrandListAdapter extends BaseAdapter implements Filterable {
         }
 
         try {
-            holder.name.setText(mDisplayedValues.get(position).getBrandName());
-            holder.note.setText(mDisplayedValues.get(position).getNote());
+            Brand brand = mDisplayedValues.get(position);
 
-            if (NullUtil.isNotNull(mDisplayedValues.get(position).getImage())) {
-                Bitmap imageBMP = BitmapFactory.decodeByteArray(mDisplayedValues.get(position).getImage(), 0, mDisplayedValues.get(position).getImage().length);
+            holder.name.setText(brand.getBrandName());
+            holder.note.setText(brand.getNote());
+
+            if (NullUtil.isNotNull(brand.getImage())) {
+                Bitmap imageBMP = BitmapFactory.decodeByteArray(brand.getImage(), 0, brand.getImage().length);
                 holder.image.setImageBitmap(imageBMP);
             } else {
                 holder.image.setImageResource(R.drawable.medical);
+            }
+
+            if (brand.getCreatedDate().after(lastReadedDate)) {
+                holder.animation.setBackgroundResource(R.drawable.animation_new);
+                AnimationDrawable animationDrawable = (AnimationDrawable) holder.animation.getBackground();
+                animationDrawable.start();
+            } else {
+                holder.animation.setBackgroundResource(R.color.transparent);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

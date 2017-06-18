@@ -27,6 +27,7 @@ import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -41,13 +42,7 @@ public class OperationsActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Intent intent = getIntent();
-        Operation operation = (Operation) intent.getSerializableExtra("operation");
-        if (NullUtil.isNotNull(operation)) {
-            operationListClick(operation);
-        } else {
-            prepareOperationsActivity();
-        }
+        prepareOperationsActivity();
     }
 
     private void prepareOperationsActivity() {
@@ -91,7 +86,11 @@ public class OperationsActivity extends BaseActivity {
                         ListView listView = (ListView) inflatedView.findViewById(R.id.layout_operations_listview);
                         SearchView searchView = (SearchView) inflatedView.findViewById(R.id.layout_operations_searchview);
 
-                        operationListAdapter = new OperationListAdapter(getActivity(), operationList);
+                        long readedOperationsDate = preferences.getLong("readedOperationsDate", 0);
+
+                        LogUtil.logMessage(getClass(),"BEFORE: "+new Date(readedOperationsDate));
+
+                        operationListAdapter = new OperationListAdapter(getActivity(), operationList, new Date(readedOperationsDate));
                         listView.setAdapter(operationListAdapter);
 
                         View footerView = getLayoutInflater().inflate(R.layout.listview_footer, null);
@@ -126,8 +125,8 @@ public class OperationsActivity extends BaseActivity {
                         operationListAdapter.addListItems(operationList);
                     }
 
+                    setEditor("readedOperationsDate", new Date().getTime());
                     lastInitializedPageIndex++;
-
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
                 }

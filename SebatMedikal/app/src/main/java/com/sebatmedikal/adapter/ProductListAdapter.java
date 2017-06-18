@@ -3,6 +3,7 @@ package com.sebatmedikal.adapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,11 @@ import android.widget.Filter;
 
 import com.sebatmedikal.R;
 import com.sebatmedikal.remote.domain.Product;
+import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,10 +31,12 @@ public class ProductListAdapter extends BaseAdapter implements Filterable {
 
     private List<Product> mOriginalValues;
     private List<Product> mDisplayedValues;
+    private Date lastReadedDate;
     LayoutInflater inflater;
 
-    public ProductListAdapter(Context context, List<Product> mProductArrayList) {
+    public ProductListAdapter(Context context, List<Product> mProductArrayList, Date lastReadedDate) {
         this.mOriginalValues = mProductArrayList;
+        this.lastReadedDate = lastReadedDate;
         this.mDisplayedValues = mProductArrayList;
         inflater = LayoutInflater.from(context);
     }
@@ -59,6 +64,7 @@ public class ProductListAdapter extends BaseAdapter implements Filterable {
         TextView productName;
         TextView productBrand;
         ImageView productImage;
+        ImageView animation;
     }
 
     @Override
@@ -73,22 +79,33 @@ public class ProductListAdapter extends BaseAdapter implements Filterable {
             holder.productName = (TextView) convertView.findViewById(R.id.list_item_products_name);
             holder.productBrand = (TextView) convertView.findViewById(R.id.list_item_products_brand);
             holder.productImage = (ImageView) convertView.findViewById(R.id.list_item_products_image);
+            holder.animation = (ImageView) convertView.findViewById(R.id.list_item_products_animation);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
 
         try {
-            String productName = mDisplayedValues.get(position).getProductName();
-            if (NullUtil.isNotNull(mDisplayedValues.get(position).getNote())) {
-                productName += " - " + mDisplayedValues.get(position).getNote();
+
+            Product product = mDisplayedValues.get(position);
+            String productName = product.getProductName();
+            if (NullUtil.isNotNull(product.getNote())) {
+                productName += " - " + product.getNote();
             }
             holder.productName.setText(productName);
-            holder.productBrand.setText(mDisplayedValues.get(position).getBrand().getBrandName());
+            holder.productBrand.setText(product.getBrand().getBrandName());
 
-            if (NullUtil.isNotNull(mDisplayedValues.get(position).getImage())) {
-                Bitmap imageBMP = BitmapFactory.decodeByteArray(mDisplayedValues.get(position).getImage(), 0, mDisplayedValues.get(position).getImage().length);
+            if (NullUtil.isNotNull(product.getImage())) {
+                Bitmap imageBMP = BitmapFactory.decodeByteArray(product.getImage(), 0, product.getImage().length);
                 holder.productImage.setImageBitmap(imageBMP);
+            }
+
+            if (product.getCreatedDate().after(lastReadedDate)) {
+                holder.animation.setBackgroundResource(R.drawable.animation_new);
+                AnimationDrawable animationDrawable = (AnimationDrawable) holder.animation.getBackground();
+                animationDrawable.start();
+            } else {
+                holder.animation.setBackgroundResource(R.color.transparent);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

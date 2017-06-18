@@ -7,23 +7,25 @@
 
     <ImageView
         android:id="@+id/list_item_products_image"
-        android:padding="10dp"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/medical"/>
+        android:padding="10dp"
+        android:src="@drawable/medical" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/list_item_products_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:padding="10dip"
-            android:textSize="19dip"
             android:maxLines="4"
+            android:padding="10dip"
+            android:text="@string/productName"
+            android:textSize="19dip"
             android:textStyle="bold" />
 
         <TextView
@@ -31,8 +33,21 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="10dip"
+            android:text="@string/brand"
             android:textSize="9dip"
             android:textStyle="bold" />
     </LinearLayout>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/list_item_products_animation"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
 </LinearLayout>
