@@ -144,8 +144,14 @@ public class UsersActivity extends BaseActivity {
         new_user_firstname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_firstName);
         new_user_lastname = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_lastName);
         new_user_email = (AutoCompleteTextView) layout_new_user.findViewById(R.id.layout_new_user_email);
-        Button save = (Button) layout_new_user.findViewById(R.id.layout_new_user_save);
 
+        new_user_username.addTextChangedListener(defaultTextWatcher);
+        new_user_password.addTextChangedListener(defaultTextWatcher);
+        new_user_firstname.addTextChangedListener(defaultTextWatcher);
+        new_user_lastname.addTextChangedListener(defaultTextWatcher);
+        new_user_email.addTextChangedListener(defaultTextWatcher);
+
+        save = (ImageButton) layout_new_user.findViewById(R.id.layout_new_user_save);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,8 +226,9 @@ public class UsersActivity extends BaseActivity {
 
                 if (success) {
                     showToast("User created");
+                    change(false);
                 } else {
-                    showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
+                    showToast("User success: " + success + "\nErrorMessage:" + errorMessage);
                 }
 
                 prepareUsersActivity();
