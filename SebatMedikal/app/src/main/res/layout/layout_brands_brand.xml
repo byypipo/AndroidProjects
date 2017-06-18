@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -48,7 +48,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -62,7 +62,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -76,7 +76,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -90,13 +90,43 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top_big">
 
-                <Button
-                    android:id="@+id/layout_brands_brand_gotoproduct"
-                    android:layout_marginTop="10dp"
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="@string/gotoProduts" />
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageButton
+                            android:id="@+id/layout_brands_brand_save"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/save_white" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <ImageButton
+                            android:id="@+id/layout_brands_brand_gotoproduct"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:background="@drawable/products" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
             </TableRow>
 
         </TableLayout>

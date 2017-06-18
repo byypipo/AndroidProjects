@@ -179,4 +179,12 @@ public class RequestModelGenerator {
         requestModelBrand.setBrand(brand);
         return requestModelBrand;
     }
+
+    public static RequestModelBrand brandUpdate(String accessToken, Brand brand) {
+        RequestModelBrand requestModelBrand = new RequestModelBrand();
+        requestModelBrand.setAccessToken(accessToken);
+        requestModelBrand.setOperation("update");
+        requestModelBrand.setBrand(brand);
+        return requestModelBrand;
+    }
 }

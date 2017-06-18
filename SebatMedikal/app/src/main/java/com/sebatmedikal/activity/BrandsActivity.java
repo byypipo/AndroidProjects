@@ -49,17 +49,17 @@ public class BrandsActivity extends BaseActivity {
 
     private List<Product> brandProducts;
 
-    private ImageView selectedProductImage;
     private TextView selectedProductName;
     private TextView selectedProductNote;
     private TextView selectedProductTypeCount;
     private TextView selectedProductCreatedBy;
 
-    private ImageView newBrandImage;
+    private ImageView brandImage;
     private AutoCompleteTextView newBrandName;
     private AutoCompleteTextView newBrandNote;
 
-    private boolean newBrandImageAdded = false;
+    private boolean brandImageAdded = false;
+    private Brand selectedBrand;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -156,7 +156,7 @@ public class BrandsActivity extends BaseActivity {
 
         View view = inflate(R.layout.layout_brands_new_brand);
 
-        newBrandImage = (ImageView) view.findViewById(R.id.layout_brands_new_brand_image);
+        brandImage = (ImageView) view.findViewById(R.id.layout_brands_new_brand_image);
         newBrandName = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_name);
         newBrandName.addTextChangedListener(defaultTextWatcher);
         newBrandNote = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_note);
@@ -169,7 +169,7 @@ public class BrandsActivity extends BaseActivity {
             }
         });
 
-        newBrandImage.setOnClickListener(imageClickListenerWithPermission);
+        brandImage.setOnClickListener(imageClickListenerWithPermission);
 
         showProgress(false);
     }
@@ -186,10 +186,11 @@ public class BrandsActivity extends BaseActivity {
         newBrand.setBrandName(newBrandName.getText().toString());
         newBrand.setNote(newBrandNote.getText().toString());
 
-        if (newBrandImageAdded) {
-            Bitmap newImageBitmap = ((BitmapDrawable) newBrandImage.getDrawable()).getBitmap();
+        if (brandImageAdded) {
+            Bitmap newImageBitmap = ((BitmapDrawable) brandImage.getDrawable()).getBitmap();
             byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
             newBrand.setImage(newImage);
+            brandImageAdded = false;
         }
 
         String URL = getServerIp() + getString(R.string.serviceTagBrand);
@@ -239,12 +240,13 @@ public class BrandsActivity extends BaseActivity {
 
         View view = inflate(R.layout.layout_brands_brand);
 
-        selectedProductImage = (ImageView) view.findViewById(R.id.layout_brands_brand_image);
+        brandImage = (ImageView) view.findViewById(R.id.layout_brands_brand_image);
         selectedProductName = (TextView) view.findViewById(R.id.layout_brands_brand_brandName);
         selectedProductNote = (TextView) view.findViewById(R.id.layout_brands_brand_note);
         selectedProductTypeCount = (TextView) view.findViewById(R.id.layout_brands_brand_productTypeCount);
         selectedProductCreatedBy = (TextView) view.findViewById(R.id.layout_brands_brand_createdBy);
-        Button gotoProducts = (Button) view.findViewById(R.id.layout_brands_brand_gotoproduct);
+        save = (ImageButton) view.findViewById(R.id.layout_brands_brand_save);
+        ImageButton gotoProducts = (ImageButton) view.findViewById(R.id.layout_brands_brand_gotoproduct);
 
         selectedProductName.setText(brand.getBrandName());
         selectedProductNote.setText(brand.getNote());
@@ -253,7 +255,7 @@ public class BrandsActivity extends BaseActivity {
 
         if (NullUtil.isNotNull(brand.getImage())) {
             Bitmap imageBMP = BitmapFactory.decodeByteArray(brand.getImage(), 0, brand.getImage().length);
-            selectedProductImage.setImageBitmap(imageBMP);
+            brandImage.setImageBitmap(imageBMP);
         }
 
         gotoProducts.setOnClickListener(new View.OnClickListener() {
@@ -307,7 +309,69 @@ public class BrandsActivity extends BaseActivity {
             }
         });
 
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateBrand();
+            }
+        });
+
+        brandImage.setOnClickListener(imageClickListenerWithPermission);
+
+        selectedBrand = brand;
         showProgress(false);
+    }
+
+    private void updateBrand() {
+        if (NullUtil.isNotNull(baseTask)) {
+            return;
+        }
+
+        if (!isChange()) {
+            LogUtil.logMessage(getClass(), "IMAGE NOT CHANGED");
+            return;
+        }
+
+        LogUtil.logMessage(getClass(), "IMAGE CHANGED");
+
+        Bitmap newImageBitmap = ((BitmapDrawable) brandImage.getDrawable()).getBitmap();
+        byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
+        selectedBrand.setImage(newImage);
+        brandImageAdded = false;
+
+        String URL = getServerIp() + getString(R.string.serviceTagBrand);
+        RequestModel requestModel = RequestModelGenerator.brandUpdate(getAccessToken(), selectedBrand);
+
+        baseTask = new BaseTask(URL, requestModel, new Performer() {
+            @Override
+            public void perform(boolean success) {
+                String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
+
+                baseTask = null;
+                showProgress(false);
+
+                if (isServerUnreachable) {
+                    showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
+                    return;
+                }
+
+                if (success) {
+                    change(false);
+                    showToast("Brand updated");
+                } else {
+                    showToast("Brand success: " + success + "\nErrorMessage:" + errorMessage);
+                }
+            }
+        });
+        baseTask.execute((Void) null);
     }
 
     @Override
@@ -328,8 +392,8 @@ public class BrandsActivity extends BaseActivity {
 
             Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
 
-            newBrandImage.setImageBitmap(bitmap);
-            newBrandImageAdded = true;
+            brandImage.setImageBitmap(bitmap);
+            brandImageAdded = true;
             change(true);
         }
     }
