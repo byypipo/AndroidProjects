@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -49,7 +50,7 @@ public class ProductsActivity extends BaseActivity {
     private TextView operationTotalPrice;
     private Spinner operationType;
 
-    private ImageView new_product_image;
+    private ImageView product_image;
     private AutoCompleteTextView new_product_name;
     private AutoCompleteTextView new_product_price;
     private Spinner new_product_brand;
@@ -67,11 +68,6 @@ public class ProductsActivity extends BaseActivity {
         brandFilter = intent.getStringExtra("brandFilter");
         LogUtil.logMessage(getClass(), "brandFilter: " + brandFilter);
         prepareProductsActivity();
-    }
-
-    @Override
-    protected void capturedCamera() {
-        //NOT USED
     }
 
     private void prepareProductsActivity() {
@@ -141,7 +137,7 @@ public class ProductsActivity extends BaseActivity {
                     });
 
                     if (CompareUtil.equal(preferences.getString("roleid", null), getString(R.string.roleAdmin))) {
-                        Button button = (Button) findViewById(R.id.layout_product_new_product_button);
+                        ImageButton button = (ImageButton) findViewById(R.id.layout_product_new_product_button);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -174,7 +170,7 @@ public class ProductsActivity extends BaseActivity {
 
         View layout_product_new_product = inflate(R.layout.layout_product_new_product);
 
-        new_product_image = (ImageView) layout_product_new_product.findViewById(R.id.layout_product_new_product_image);
+        product_image = (ImageView) layout_product_new_product.findViewById(R.id.layout_product_new_product_image);
         new_product_name = (AutoCompleteTextView) layout_product_new_product.findViewById(R.id.layout_product_new_product_name);
         new_product_price = (AutoCompleteTextView) layout_product_new_product.findViewById(R.id.layout_product_new_product_price);
         new_product_brand = (Spinner) layout_product_new_product.findViewById(R.id.layout_product_new_product_brand);
@@ -182,15 +178,7 @@ public class ProductsActivity extends BaseActivity {
         new_product_barcod = (AutoCompleteTextView) layout_product_new_product.findViewById(R.id.layout_product_new_product_barcod);
 
 
-        new_product_image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(
-                        Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-                startActivityForResult(intent, RESULT_LOAD_IMAGE);
-            }
-        });
+        product_image.setOnClickListener(imageClickListenerWithoutPermission);
 
         Button save = (Button) layout_product_new_product.findViewById(R.id.layout_product_new_product_save);
 
@@ -250,13 +238,21 @@ public class ProductsActivity extends BaseActivity {
 
         currentView = inflate(R.layout.layout_products_product);
 
-        ImageView productImage = (ImageView) currentView.findViewById(R.id.layout_product_image);
+        product_image = (ImageView) currentView.findViewById(R.id.layout_product_image);
         TextView productName = (TextView) currentView.findViewById(R.id.layout_product_productName);
         TextView brand = (TextView) currentView.findViewById(R.id.layout_product_brand);
         TextView note = (TextView) currentView.findViewById(R.id.layout_product_note);
         TextView stock = (TextView) currentView.findViewById(R.id.layout_product_stock);
         TextView price = (TextView) currentView.findViewById(R.id.layout_product_price);
-        Button newOperation = (Button) currentView.findViewById(R.id.layout_product_new_operation_button);
+        save = (ImageButton) currentView.findViewById(R.id.layout_product_save);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                updateProduct();
+            }
+        });
+
+        ImageButton newOperation = (ImageButton) currentView.findViewById(R.id.layout_product_new_operation);
 
         productName.setText(product.getProductName());
         brand.setText(product.getBrand().getBrandName());
@@ -271,7 +267,7 @@ public class ProductsActivity extends BaseActivity {
 
         if (NullUtil.isNotNull(product.getImage())) {
             Bitmap imageBMP = BitmapFactory.decodeByteArray(product.getImage(), 0, product.getImage().length);
-            productImage.setImageBitmap(imageBMP);
+            product_image.setImageBitmap(imageBMP);
         }
 
         newOperation.setOnClickListener(new View.OnClickListener() {
@@ -281,8 +277,61 @@ public class ProductsActivity extends BaseActivity {
             }
         });
 
+        product_image.setOnClickListener(imageClickListenerWithPermission);
 
         showProgress(false);
+    }
+
+    private void updateProduct() {
+        if (NullUtil.isNotNull(baseTask)) {
+            return;
+        }
+
+        if (!isChange()) {
+            LogUtil.logMessage(getClass(), "IMAGE NOT CHANGED");
+            return;
+        }
+
+        LogUtil.logMessage(getClass(), "IMAGE CHANGED");
+
+        Bitmap newImageBitmap = ((BitmapDrawable) product_image.getDrawable()).getBitmap();
+        byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
+        selectedProduct.setImage(newImage);
+        productImageAdded = false;
+
+        String URL = getServerIp() + getString(R.string.serviceTagProduct);
+        RequestModel requestModel = RequestModelGenerator.productUpdate(getAccessToken(), selectedProduct);
+
+        baseTask = new BaseTask(URL, requestModel, new Performer() {
+            @Override
+            public void perform(boolean success) {
+                String errorMessage = baseTask.getErrorMessage();
+                boolean isServerUnreachable = baseTask.isServerUnreachable();
+                boolean isLogout = baseTask.isLogout();
+
+                baseTask = null;
+                showProgress(false);
+
+                if (isServerUnreachable) {
+                    showToast(getActivityString(R.string.serverUnreachable));
+                    return;
+                }
+
+                if (isLogout) {
+                    showToast(getActivityString(R.string.userLogout));
+                    logout();
+                    return;
+                }
+
+                if (success) {
+                    change(false);
+                    showToast("Product updated");
+                } else {
+                    showToast("Product success: " + success + "\nErrorMessage:" + errorMessage);
+                }
+            }
+        });
+        baseTask.execute((Void) null);
     }
 
     private void loadNewOperationLayout() {
@@ -319,6 +368,7 @@ public class ProductsActivity extends BaseActivity {
                 }
 
                 operationTotalPrice.setText((price * productCount) + " " + getString(R.string.currency));
+                change(true);
             }
 
             @Override
@@ -326,7 +376,9 @@ public class ProductsActivity extends BaseActivity {
             }
         });
 
-        Button save = (Button) currentView.findViewById(R.id.layout_products_product_newoperation_saveButton);
+        operationNote.addTextChangedListener(defaultTextWatcher);
+
+        save = (ImageButton) currentView.findViewById(R.id.layout_products_product_newoperation_saveButton);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -376,6 +428,7 @@ public class ProductsActivity extends BaseActivity {
 
                 if (success) {
                     showToast("Operation success: " + success);
+                    change(false);
                 } else {
                     showToast("Operation success: " + success + "\nErrorMessage:" + errorMessage);
                 }
@@ -406,7 +459,7 @@ public class ProductsActivity extends BaseActivity {
         newProduct.setBrand(brand);
 
         if (productImageAdded) {
-            Bitmap newImageBitmap = ((BitmapDrawable) new_product_image.getDrawable()).getBitmap();
+            Bitmap newImageBitmap = ((BitmapDrawable) product_image.getDrawable()).getBitmap();
             byte[] newImage = ImageUtil.converBitmapToByteArray(newImageBitmap, (float) 0.1);
             newProduct.setImage(newImage);
         }
@@ -466,8 +519,9 @@ public class ProductsActivity extends BaseActivity {
 
             Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
 
-            new_product_image.setImageBitmap(bitmap);
+            product_image.setImageBitmap(bitmap);
             productImageAdded = true;
+            change(true);
         }
     }
 }

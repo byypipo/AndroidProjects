@@ -143,6 +143,14 @@ public class RequestModelGenerator {
         return requestModelProduct;
     }
 
+    public static RequestModelProduct productUpdate(String accessToken, Product product) {
+        RequestModelProduct requestModelProduct = new RequestModelProduct();
+        requestModelProduct.setAccessToken(accessToken);
+        requestModelProduct.setOperation("update");
+        requestModelProduct.setProduct(product);
+        return requestModelProduct;
+    }
+
     //Operation operations
     public static RequestModel operationProduct(String accessToken, String operationId) {
         RequestModel requestModel = prepareRequestModel(accessToken, "product");

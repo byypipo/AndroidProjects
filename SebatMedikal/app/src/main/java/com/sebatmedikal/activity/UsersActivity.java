@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SearchView;
@@ -48,11 +49,6 @@ public class UsersActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         prepareUsersActivity();
-    }
-
-    @Override
-    protected void capturedCamera() {
-        //NOT USED
     }
 
     private void prepareUsersActivity() {
@@ -119,7 +115,7 @@ public class UsersActivity extends BaseActivity {
                     });
 
                     if (CompareUtil.equal(preferences.getString("roleid", null), getString(R.string.roleAdmin))) {
-                        Button addNewUser = (Button) findViewById(R.id.layout_users_new_user);
+                        ImageButton addNewUser = (ImageButton) findViewById(R.id.layout_users_new_user);
                         addNewUser.setVisibility(View.VISIBLE);
 
                         addNewUser.setOnClickListener(new View.OnClickListener() {

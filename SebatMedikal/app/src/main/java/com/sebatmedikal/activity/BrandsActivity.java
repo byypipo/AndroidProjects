@@ -58,7 +58,7 @@ public class BrandsActivity extends BaseActivity {
     private ImageView newBrandImage;
     private AutoCompleteTextView newBrandName;
     private AutoCompleteTextView newBrandNote;
-    private ImageButton newBrandSave;
+
     private boolean newBrandImageAdded = false;
 
     @Override
@@ -131,7 +131,7 @@ public class BrandsActivity extends BaseActivity {
                     });
 
                     if (CompareUtil.equal(preferences.getString("roleid", null), getString(R.string.roleAdmin))) {
-                        Button addNewBrand = (Button) findViewById(R.id.layout_brands_new_brand);
+                        ImageButton addNewBrand = (ImageButton) findViewById(R.id.layout_brands_new_brand);
                         addNewBrand.setVisibility(View.VISIBLE);
 
                         addNewBrand.setOnClickListener(new View.OnClickListener() {
@@ -158,70 +158,20 @@ public class BrandsActivity extends BaseActivity {
 
         newBrandImage = (ImageView) view.findViewById(R.id.layout_brands_new_brand_image);
         newBrandName = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_name);
-        newBrandName.addTextChangedListener(textWatcher);
+        newBrandName.addTextChangedListener(defaultTextWatcher);
         newBrandNote = (AutoCompleteTextView) view.findViewById(R.id.layout_brands_new_brand_note);
-        newBrandNote.addTextChangedListener(textWatcher);
-        newBrandSave = (ImageButton) view.findViewById(R.id.layout_brands_new_brand_save);
-        newBrandSave.setOnClickListener(new View.OnClickListener() {
+        newBrandNote.addTextChangedListener(defaultTextWatcher);
+        save = (ImageButton) view.findViewById(R.id.layout_brands_new_brand_save);
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 addNewBrandProcess();
             }
         });
 
-        if (NullUtil.isNotNull(capturedPictureFile)) {
-            String picturePath = capturedPictureFile.getAbsolutePath();
-            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
-
-            newBrandImage.setImageBitmap(bitmap);
-            change(true);
-            newBrandImageAdded = true;
-            capturedPictureFile = null;
-        }
-
-        newBrandImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                inflateSelectImageLayout();
-            }
-        });
+        newBrandImage.setOnClickListener(imageClickListenerWithPermission);
 
         showProgress(false);
-    }
-
-    private void change(boolean changed) {
-        if (changed) {
-            newBrandSave.setBackgroundResource(R.drawable.save_black);
-        } else {
-            newBrandSave.setBackgroundResource(R.drawable.save_white);
-        }
-    }
-
-    TextWatcher textWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            change(true);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
-
-    @Override
-    protected void capturedCamera() {
-        String picturePath = capturedPictureFile.getAbsolutePath();
-        Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
-
-        newBrandImage.setImageBitmap(bitmap);
-        newBrandImageAdded = true;
-        loadNewBrandLayout();
     }
 
     private void addNewBrandProcess() {

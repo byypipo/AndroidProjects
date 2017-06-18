@@ -44,13 +44,11 @@ public class AccountSettingsActivity extends BaseActivity {
     private EditText lastnameET;
     private TextView emailTW;
     private EditText emailET;
-    private ImageButton save;
 
     private EditText visibledET;
     private TextView gonedTW;
 
     private String picturePath;
-    private static int RESULT_LOAD_IMAGE = 1;
     private boolean imageChanged = false;
 
     @Override
@@ -58,16 +56,6 @@ public class AccountSettingsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         prepareAccountSettingsActivity();
-    }
-
-    @Override
-    protected void capturedCamera() {
-        String picturePath = capturedPictureFile.getAbsolutePath();
-        Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
-
-        image.setImageBitmap(bitmap);
-        prepareAccountSettingsActivity();
-        change(true);
     }
 
     private void prepareAccountSettingsActivity() {
@@ -134,12 +122,7 @@ public class AccountSettingsActivity extends BaseActivity {
             }
         });
 
-        image.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                inflateSelectImageLayout();
-            }
-        });
+        image.setOnClickListener(imageClickListenerWithoutPermission);
 
         setUserDetails();
     }
@@ -157,14 +140,6 @@ public class AccountSettingsActivity extends BaseActivity {
 
         gonedTW.setText(visibledET.getText().toString());
         gonedTW.setVisibility(View.VISIBLE);
-    }
-
-    private void change(boolean changed) {
-        if (changed) {
-            save.setBackgroundResource(R.drawable.save_black);
-        } else {
-            save.setBackgroundResource(R.drawable.save_white);
-        }
     }
 
     private void changeTableRow(TextView goneTW, EditText visibleET) {
@@ -244,15 +219,6 @@ public class AccountSettingsActivity extends BaseActivity {
         if (NullUtil.isNotNull(me.getImage())) {
             Bitmap imageBMP = BitmapFactory.decodeByteArray(me.getImage(), 0, me.getImage().length);
             image.setImageBitmap(imageBMP);
-        }
-
-        if (NullUtil.isNotNull(capturedPictureFile)) {
-            String picturePath = capturedPictureFile.getAbsolutePath();
-            Bitmap bitmap = ImageUtil.prepareBitmapOrientation(picturePath);
-
-            image.setImageBitmap(bitmap);
-            imageChanged = true;
-            capturedPictureFile = null;
         }
 
         if (NullUtil.isNotNull(me.getEmail())) {

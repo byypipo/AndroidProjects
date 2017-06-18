@@ -16,8 +16,9 @@
 
         <TableRow android:layout_marginTop="@dimen/table_row_top">
 
+            <!--android:layout_width="@dimen/table_left_little"-->
             <TextView
-                android:layout_width="@dimen/table_left_little"
+                android:layout_width="@dimen/table_left"
                 android:fontFamily="serif"
                 android:text="@string/notifications"
                 android:textSize="50px"
@@ -27,6 +28,7 @@
                 android:id="@+id/layout_settings_notofications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_column="4"
                 android:layout_gravity="center_horizontal" />
 
         </TableRow>
@@ -51,25 +53,43 @@
 
         </TableRow>
 
-        <TableRow android:layout_marginTop="@dimen/table_row_top">
+        <TableRow android:layout_marginTop="@dimen/table_row_top_big">
 
-            <Button
-                android:id="@+id/layout_settings_settingsFormat"
-                android:layout_width="173dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/settingsFormat" />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="1">
 
-        </TableRow>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1">
 
-        <TableRow>
+                    <ImageButton
+                        android:id="@+id/layout_settings_settingsFormat"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/refresh" />
+                </LinearLayout>
 
-            <Button
-                android:id="@+id/layout_settings_save"
-                android:layout_width="173dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/save" />
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:layout_weight="1">
+
+                    <ImageButton
+                        android:id="@+id/layout_settings_save"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/save_white" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
         </TableRow>
     </TableLayout>
 

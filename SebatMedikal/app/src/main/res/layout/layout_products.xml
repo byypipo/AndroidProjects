@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_products"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:orientation="vertical"
-    android:id="@+id/layout_products">
-    
-    <SearchView
-        android:id="@+id/layout_products_searchview"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"></SearchView>
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/layout_product_new_product_button"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/newProduct"
-        android:visibility="gone" />
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:paddingRight="6dp">
+
+        <SearchView
+            android:id="@+id/layout_products_searchview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></SearchView>
+
+        <ImageButton
+            android:id="@+id/layout_product_new_product_button"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_margin="5dp"
+            android:layout_weight="10"
+            android:background="@drawable/add"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/layout_products_listview"

@@ -50,11 +50,6 @@ public class OperationsActivity extends BaseActivity {
         }
     }
 
-    @Override
-    protected void capturedCamera() {
-        //NOT USED
-    }
-
     private void prepareOperationsActivity() {
         if (NullUtil.isNotNull(baseTask)) {
             return;

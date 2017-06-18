@@ -127,7 +127,7 @@
     <string name="settingsFormat">Varsayılan Ayarlar</string>
 
     <!--operation_types-->
-    <string name="notifications">Bildirimler</string>
+    <string name="notifications">Bildirimler(Hazır Değil)</string>
     <string name="on">Açık</string>
     <string name="off">Kapalı</string>
 
@@ -153,13 +153,15 @@
     <string name="LOGIN">%1$s çevrimiçi</string>
     <string name="LOGOUT">%1$s çevrimdışı</string>
 
-    <string name="toggle_turn_off">Kapalı</string>
-    <string name="toggle_turn_on">Açık</string>
+    <!--<string name="toggle_turn_off">Kapalı</string>-->
+    <!--<string name="toggle_turn_on">Açık</string>-->
 
     <!--camera-->
-    <string name="capture">Çek</string>
+    <!--<string name="capture">Çek</string>-->
     <string name="pleaseSelectImageSource">Lütfen resim kaynağını seçiniz</string>
     <string name="imageSource">Resim kaynağı</string>
     <string name="gallery">Galeri</string>
     <string name="camera">Kamera</string>
+    <string name="imagePermission">Resim ekleme özelliği</string>
+    <string name="onlyAdmin">yalnızca ADMIN kullanıcıları tarafından kullanılabilir</string>
 </resources>

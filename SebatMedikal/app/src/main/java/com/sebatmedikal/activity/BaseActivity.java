@@ -9,15 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Camera;
-import android.media.ExifInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.widget.Button;
-import android.widget.FrameLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -37,7 +33,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sebatmedikal.R;
-import com.sebatmedikal.camera.CameraPreview;
 import com.sebatmedikal.external.CircleImageView;
 import com.sebatmedikal.remote.domain.User;
 import com.sebatmedikal.remote.model.request.RequestModel;
@@ -47,13 +42,6 @@ import com.sebatmedikal.task.Performer;
 import com.sebatmedikal.util.CompareUtil;
 import com.sebatmedikal.util.LogUtil;
 import com.sebatmedikal.util.NullUtil;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public abstract class BaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,10 +56,11 @@ public abstract class BaseActivity extends AppCompatActivity
     private DrawerLayout drawer;
     protected BaseTask baseTask = null;
 
-    protected static File capturedPictureFile;
-    private static final int MEDIA_TYPE_IMAGE = 1;
+    protected ViewQueue viewQueue = new ViewQueue();
 
     protected static int RESULT_LOAD_IMAGE = 1;
+
+    protected ImageButton save;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +85,65 @@ public abstract class BaseActivity extends AppCompatActivity
         mProgressView = (RelativeLayout) findViewById(R.id.content_main_progress_layout);
         mEmptyView = (LinearLayout) findViewById(R.id.content_main_empty_layout);
     }
+
+    protected void change(boolean changed) {
+        if (NullUtil.isNull(save)) {
+            return;
+        }
+
+        int drawable;
+        if (changed) {
+            drawable = R.drawable.save_black;
+        } else {
+            drawable = R.drawable.save_white;
+        }
+
+        save.setBackgroundResource(drawable);
+        save.setTag(drawable);
+    }
+
+    protected boolean isChange() {
+        if (NullUtil.isNull(save)) {
+            return false;
+        }
+
+        if (CompareUtil.equal(save.getTag(), R.drawable.save_black)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    protected TextWatcher defaultTextWatcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            change(true);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    };
+
+    protected View.OnClickListener imageClickListenerWithPermission = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            inflateSelectImageLayout(true);
+        }
+    };
+
+    protected View.OnClickListener imageClickListenerWithoutPermission = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            inflateSelectImageLayout(false);
+        }
+    };
 
     private void prepareNavigationView() {
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -163,9 +211,18 @@ public abstract class BaseActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+            return;
         }
+
+        View previousView = viewQueue.getPreviousView();
+        if (NullUtil.isNotNull(previousView)) {
+            ViewGroup viewGroup = (ViewGroup) findViewById(R.id.content_main_empty_layout);
+            viewGroup.removeAllViews();
+            viewGroup.addView(previousView);
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     @Override
@@ -249,6 +306,11 @@ public abstract class BaseActivity extends AppCompatActivity
         LayoutInflater layoutInflater = getLayoutInflater();
 
         ViewGroup viewGroup = (ViewGroup) findViewById(R.id.content_main_empty_layout);
+        View oldView = viewGroup.getChildAt(0);
+        if (NullUtil.isNotNull(oldView)) {
+            viewQueue.addView(oldView);
+        }
+
         viewGroup.removeAllViews();
         return layoutInflater.inflate(layout, viewGroup);
     }
@@ -326,7 +388,14 @@ public abstract class BaseActivity extends AppCompatActivity
     }
 
     //camera
-    protected void inflateSelectImageLayout() {
+    protected void inflateSelectImageLayout(boolean checkPermission) {
+        if (checkPermission) {
+            if (!CompareUtil.equal(preferences.getString("roleid", null), getString(R.string.roleAdmin))) {
+                showToast(getString(R.string.imagePermission) + " " + getString(R.string.onlyAdmin));
+                return;
+            }
+        }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setTitle(getString(R.string.imageSource));
         alertDialogBuilder
@@ -341,118 +410,12 @@ public abstract class BaseActivity extends AppCompatActivity
                 })
                 .setNegativeButton(R.string.camera, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        loadCamera();
+                        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                        startActivityForResult(intent, RESULT_LOAD_IMAGE);
                     }
                 });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
-
-    protected void loadCamera() {
-        loadCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
-    }
-
-    protected void loadCamera(final int cameraId) {
-        currentView = inflate(R.layout.layout_camera);
-
-        final Camera mCamera = getCameraInstance(cameraId);
-        CameraPreview mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) currentView.findViewById(R.id.layout_camera_preview);
-        preview.addView(mPreview);
-
-        preview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mCamera.takePicture(null, null, new Camera.PictureCallback() {
-                    @Override
-                    public void onPictureTaken(byte[] bytes, Camera camera) {
-                        capturedPictureFile = getOutputMediaFile(MEDIA_TYPE_IMAGE);
-
-                        try {
-                            FileOutputStream fos = new FileOutputStream(capturedPictureFile);
-                            fos.write(bytes);
-                            fos.close();
-
-                            try {
-                                ExifInterface ei = new ExifInterface(capturedPictureFile.getAbsolutePath());
-                                if (CompareUtil.equal(cameraId, Camera.CameraInfo.CAMERA_FACING_BACK)) {
-                                    ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_90));
-                                } else {
-                                    ei.setAttribute(ExifInterface.TAG_ORIENTATION, String.valueOf(ExifInterface.ORIENTATION_ROTATE_270));
-                                }
-
-                                ei.saveAttributes();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        } catch (FileNotFoundException e) {
-                            LogUtil.logMessage(getClass(), "File not found: " + e.getMessage());
-                        } catch (IOException e) {
-                            LogUtil.logMessage(getClass(), "Error accessing file: " + e.getMessage());
-                        }
-
-                        mCamera.stopPreview();
-                        mCamera.release();
-
-                        capturedCamera();
-                    }
-                });
-            }
-        });
-
-        ImageButton captureButton = (ImageButton) currentView.findViewById(R.id.layout_camera_change);
-        captureButton.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mCamera.stopPreview();
-                        mCamera.release();
-
-                        if (CompareUtil.equal(cameraId, Camera.CameraInfo.CAMERA_FACING_BACK)) {
-                            loadCamera(Camera.CameraInfo.CAMERA_FACING_FRONT);
-                        } else {
-                            loadCamera(Camera.CameraInfo.CAMERA_FACING_BACK);
-                        }
-                    }
-                }
-        );
-    }
-
-    protected abstract void capturedCamera();
-
-    private static Camera getCameraInstance(int cameraId) {
-        Camera c = null;
-        try {
-            c = Camera.open(cameraId); // attempt to get a Camera instance
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return c;
-    }
-
-    private static File getOutputMediaFile(int type) {
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "SebatMedikal");
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.d("MyCameraApp", "failed to create directory");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        if (type == MEDIA_TYPE_IMAGE) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "IMG_" + timeStamp + ".jpg");
-        } else {
-            return null;
-        }
-
-        return mediaFile;
-    }
-
 }

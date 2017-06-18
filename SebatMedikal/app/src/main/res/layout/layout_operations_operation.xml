@@ -18,7 +18,7 @@
             android:id="@+id/layout_operation_image"
             android:layout_width="@dimen/little_image_square"
             android:layout_height="@dimen/little_image_square"
-            android:src="@drawable/medical"/>
+            android:src="@drawable/medical" />
 
     </LinearLayout>
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -48,7 +48,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -62,7 +62,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -76,7 +76,7 @@
                     android:layout_width="165dp" />
             </TableRow>
 
-            <TableRow>
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -89,7 +89,8 @@
                     android:id="@+id/layout_operation_type"
                     android:layout_width="165dp" />
             </TableRow>
-            <TableRow>
+
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
@@ -102,7 +103,8 @@
                     android:id="@+id/layout_operation_count"
                     android:layout_width="165dp" />
             </TableRow>
-            <TableRow>
+
+            <TableRow android:layout_marginTop="@dimen/table_row_top">
 
                 <TextView
                     android:layout_width="165dp"
