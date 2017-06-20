@@ -40,16 +40,15 @@
                     android:layout_width="@dimen/table_left"
                     android:fontFamily="serif"
                     android:text="@string/userName"
-                    android:textSize="50px"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/layout_account_settings_userNameTW"
-                    android:layout_width="165dp" />
+                    android:layout_width="match_parent" />
 
                 <EditText
                     android:id="@+id/layout_account_settings_userNameET"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
@@ -60,17 +59,16 @@
                     android:layout_width="@dimen/table_left"
                     android:fontFamily="serif"
                     android:text="@string/password"
-                    android:textSize="50px"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/layout_account_settings_passwordTW"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:inputType="textPassword" />
 
                 <EditText
                     android:id="@+id/layout_account_settings_passwordET"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:inputType="textPassword"
                     android:singleLine="true"
                     android:visibility="gone" />
@@ -83,16 +81,15 @@
                     android:layout_width="@dimen/table_left"
                     android:fontFamily="serif"
                     android:text="@string/firstName"
-                    android:textSize="50px"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/layout_account_settings_firstNameTW"
-                    android:layout_width="165dp" />
+                    android:layout_width="match_parent" />
 
                 <EditText
                     android:id="@+id/layout_account_settings_firstNameET"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
@@ -103,16 +100,15 @@
                     android:layout_width="@dimen/table_left"
                     android:fontFamily="serif"
                     android:text="@string/lastName"
-                    android:textSize="50px"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/layout_account_settings_lastNameTW"
-                    android:layout_width="165dp" />
+                    android:layout_width="match_parent" />
 
                 <EditText
                     android:id="@+id/layout_account_settings_lastNameET"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:singleLine="true"
                     android:visibility="gone" />
             </TableRow>
@@ -123,16 +119,15 @@
                     android:layout_width="@dimen/table_left"
                     android:fontFamily="serif"
                     android:text="@string/email"
-                    android:textSize="50px"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/layout_account_settings_emailTW"
-                    android:layout_width="165dp" />
+                    android:layout_width="match_parent" />
 
                 <EditText
                     android:id="@+id/layout_account_settings_emailET"
-                    android:layout_width="165dp"
+                    android:layout_width="match_parent"
                     android:inputType="textEmailAddress"
                     android:singleLine="true"
                     android:visibility="gone" />
@@ -142,11 +137,11 @@
 
         <ImageButton
             android:id="@+id/layout_account_settings_save"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/icon"
+            android:layout_height="@dimen/icon"
             android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/save_white"/>
+            android:layout_marginTop="@dimen/table_row_top_big"
+            android:background="@drawable/save_white" />
 
     </LinearLayout>
 

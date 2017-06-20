@@ -23,9 +23,12 @@
     <string name="delete">Sil</string>
     <string name="update">Güncelle</string>
 
+    <string name="pleaseInputPrice">Lütfen ürün fiyatını giriniz</string>
+    <string name="pleaseInputProductName">Lütfen ürün ismini giriniz</string>
+
     <!--server information-->
-    <!--<string name="serverURL">http://192.168.1.107:8080</string>-->
-    <string name="serverURL">http://www.byypipo.com:8080</string>
+    <string name="serverURL">http://192.168.1.107:8080</string>
+    <!--<string name="serverURL">http://www.byypipo.com:8080</string>-->
     <string name="serviceTagUser">/usersRest</string>
     <string name="serviceTagRole">/rolesRest</string>
     <string name="serviceTagProduct">/productsRest</string>

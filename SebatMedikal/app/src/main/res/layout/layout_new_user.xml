@@ -10,6 +10,12 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_top">
 
+    <Spinner
+        android:id="@+id/layout_new_user_role"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/role_array" />
+
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -32,12 +38,6 @@
             android:hint="@string/password"
             android:inputType="textPassword" />
     </android.support.design.widget.TextInputLayout>
-
-    <Spinner
-        android:id="@+id/layout_new_user_role"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/role_array" />
 
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
@@ -76,9 +76,9 @@
 
     <ImageButton
         android:id="@+id/layout_new_user_save"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginTop="25dp"
+        android:layout_width="@dimen/icon"
+        android:layout_height="@dimen/icon"
+        android:layout_marginTop="@dimen/table_row_top_big"
         android:background="@drawable/save_white" />
 
 </LinearLayout>

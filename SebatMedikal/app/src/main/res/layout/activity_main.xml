@@ -28,7 +28,7 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
+                android:layout_height="@dimen/footer_icon"
                 android:layout_alignParentBottom="true"
                 android:background="@color/colorPrimary"
                 android:src="@drawable/sebat_medikal" />

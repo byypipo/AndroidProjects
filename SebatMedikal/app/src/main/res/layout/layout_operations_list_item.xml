@@ -6,7 +6,7 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="240dp"
+        android:layout_width="@dimen/operations_lineer_layout_width"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -14,21 +14,21 @@
             android:id="@+id/list_item_operations_productname"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:maxLines="4"
-            android:padding="10dip"
+            android:layout_marginLeft="@dimen/list_item_text_padding_left"
+            android:maxLines="2"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/productName"
-            android:textSize="19dip"
+            android:textSize="@dimen/list_item_text_big"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/list_item_operations_count"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:padding="10dip"
+            android:layout_marginLeft="@dimen/list_item_text_padding_left"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/operation_count"
-            android:textSize="13dip"
+            android:textSize="@dimen/list_item_text_little"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -44,9 +44,9 @@
 
             <ImageView
                 android:id="@+id/list_item_operations_animation"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:padding="10dp"
+                android:layout_width="@dimen/icon"
+                android:layout_height="@dimen/icon"
+                android:padding="@dimen/list_item_text_padding"
                 android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
@@ -56,7 +56,7 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/operation_type"
-            android:textSize="19dip"
+            android:textSize="@dimen/list_item_text_big"
             android:textStyle="bold" />
     </LinearLayout>
 

@@ -183,10 +183,14 @@ public class ProductsActivity extends BaseActivity {
         new_product_note = (AutoCompleteTextView) layout_product_new_product.findViewById(R.id.layout_product_new_product_note);
         new_product_barcod = (AutoCompleteTextView) layout_product_new_product.findViewById(R.id.layout_product_new_product_barcod);
 
+        new_product_name.addTextChangedListener(defaultTextWatcher);
+        new_product_price.addTextChangedListener(defaultTextWatcher);
+        new_product_note.addTextChangedListener(defaultTextWatcher);
+        new_product_barcod.addTextChangedListener(defaultTextWatcher);
 
         product_image.setOnClickListener(imageClickListenerWithoutPermission);
 
-        Button save = (Button) layout_product_new_product.findViewById(R.id.layout_product_new_product_save);
+        save = (ImageButton) layout_product_new_product.findViewById(R.id.layout_product_new_product_save);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -451,6 +455,18 @@ public class ProductsActivity extends BaseActivity {
             return;
         }
 
+        if (NullUtil.isNull(new_product_name.getText().toString())) {
+            new_product_name.setError(getString(R.string.pleaseInputProductName));
+            new_product_name.requestFocus();
+            return;
+        }
+
+        if (NullUtil.isNull(new_product_price.getText().toString())) {
+            new_product_price.setError(getString(R.string.pleaseInputPrice));
+            new_product_price.requestFocus();
+            return;
+        }
+
         selectedProduct = null;
         showProgress(true);
 
@@ -495,6 +511,7 @@ public class ProductsActivity extends BaseActivity {
                 }
 
                 if (success) {
+                    change(false);
                     showToast("Product Added success: " + success);
                 } else {
                     showToast("Product Added success: " + success + "\nErrorMessage:" + errorMessage);

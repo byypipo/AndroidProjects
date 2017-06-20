@@ -47,10 +47,10 @@
 
     <ImageButton
         android:id="@+id/layout_brands_new_brand_save"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="@dimen/icon"
+        android:layout_height="@dimen/icon"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/table_row_top_big"
         android:background="@drawable/save_white"/>
 
 </LinearLayout>

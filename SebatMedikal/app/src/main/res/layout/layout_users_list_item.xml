@@ -13,33 +13,32 @@
         android:layout_width="@dimen/image_circle"
         android:layout_height="@dimen/image_circle"
         android:layout_centerInParent="true"
-        app:civ_border_width="3dp" />
+        app:civ_border_width="@dimen/circle_border_width" />
 
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/list_item_text_padding_left">
 
         <TextView
             android:id="@+id/list_item_users_username"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:maxLines="4"
-            android:padding="10dip"
+            android:maxLines="2"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/userName"
-            android:textSize="19dip"
+            android:textSize="@dimen/list_item_text_big"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/list_item_users_usertype"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:padding="10dip"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/userType"
-            android:textSize="13dip"
+            android:textSize="@dimen/list_item_text_little"
             android:textStyle="bold" />
 
     </LinearLayout>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/layout_brands_list_item"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -19,27 +18,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/list_item_text_padding_left">
 
         <TextView
             android:id="@+id/layout_brands_list_item_name"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:maxLines="4"
-            android:padding="10dip"
+            android:maxLines="2"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/brandName"
-            android:textSize="19dip"
+            android:textSize="@dimen/list_item_text_big"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/layout_brands_list_item_note"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:padding="10dip"
+            android:padding="@dimen/list_item_text_padding"
             android:text="@string/note"
-            android:textSize="13dip"
+            android:textSize="@dimen/list_item_text_little"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -51,9 +49,9 @@
 
         <ImageView
             android:id="@+id/layout_brands_list_item_animation"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="@dimen/icon"
+            android:layout_height="@dimen/icon"
             android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true" />
     </RelativeLayout>
 </LinearLayout>

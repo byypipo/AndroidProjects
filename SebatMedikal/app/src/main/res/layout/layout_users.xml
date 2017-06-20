@@ -7,9 +7,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/search_view_height"
         android:orientation="horizontal"
-        android:paddingRight="6dp">
+        android:paddingRight="@dimen/search_view_padding_right">
 
         <SearchView
             android:id="@+id/layout_users_searchview"
@@ -20,8 +20,8 @@
         <ImageButton
             android:id="@+id/layout_users_new_user"
             android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_margin="5dp"
+            android:layout_height="@dimen/add_icon_height"
+            android:layout_margin="@dimen/add_icon_margin"
             android:layout_weight="10"
             android:background="@drawable/add"
             android:visibility="gone" />

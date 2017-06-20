@@ -19,7 +19,7 @@
         <LinearLayout
             android:id="@+id/nav_bar_header"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="@dimen/nav_header_linear_layout_heigth"
             android:layout_centerInParent="true"
             android:orientation="horizontal"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -27,19 +27,19 @@
 
             <com.sebatmedikal.external.CircleImageView
                 android:id="@+id/nav_bar_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="@dimen/nav_header_circle_image"
+                android:layout_height="@dimen/nav_header_circle_image"
                 android:layout_centerInParent="true"
                 android:background="@drawable/user"
                 app:civ_border_color="@color/white"
-                app:civ_border_width="2dp" />
+                app:civ_border_width="@dimen/circle_border_width" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
-                android:paddingTop="30dp">
+                android:paddingTop="@dimen/nav_header_padding_top">
 
                 <TextView
                     android:id="@+id/nav_header_user_name"
@@ -48,7 +48,7 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:text="@string/unknownUser"
-                    android:textSize="17dp"
+                    android:textSize="@dimen/list_item_text_big"
                     android:textStyle="bold" />
 
 
@@ -57,7 +57,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/unknownRole"
-                    android:textSize="12dp"
+                    android:textSize="@dimen/list_item_text_little"
                     android:textStyle="bold" />
 
             </LinearLayout>

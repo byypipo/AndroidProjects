@@ -30,13 +30,13 @@
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp" />
+                android:layout_marginBottom="@dimen/progress_margin_bottom"
+                android:layout_marginLeft="@dimen/progress_margin_left" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/progress_text_margin_top"
                 android:text="@string/pleaseWait" />
         </LinearLayout>
     </RelativeLayout>
